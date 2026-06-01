@@ -1,0 +1,29 @@
+EXTERNAL QUALITY REVIEW TECHNICAL REPORT
+State: TX
+Program: Medicaid managed care
+Reporting Year: 2024
+EQRO: (synthetic example for demonstration only)
+
+This is a SYNTHETIC document created to demonstrate the Dark Health Data
+pipeline offline. Numbers are illustrative and do not describe any real plan.
+
+== PERFORMANCE MEASURES ==
+Plan: Superior HealthPlan
+Measure: Well-Child Visits in the First 30 Months of Life | Code: W30 | Steward: HEDIS | Population: Children | Method: Hybrid | Rate: 58.2% | Numerator: 1164 | Denominator: 2000
+Measure: Controlling High Blood Pressure | Code: CBP | Steward: HEDIS | Population: Adults | Method: Hybrid | Rate: 61.7% | Numerator: 617 | Denominator: 1000
+Measure: Prenatal and Postpartum Care: Postpartum Care | Code: PPC | Steward: HEDIS | Population: Adults | Method: Hybrid | Rate: 70.0% | Numerator: 600 | Denominator: 1000
+Measure: Breast Cancer Screening | Code: BCS | Steward: Adult Core Set | Population: Adults | Method: Administrative | Rate: 49.3% | Numerator: 2100 | Denominator: 2000
+
+Plan: Amerigroup Texas
+Measure: Well-Child Visits in the First 30 Months of Life | Code: W30 | Steward: HEDIS | Population: Children | Method: Hybrid | Rate: 52.9% | Numerator: 1058 | Denominator: 2000
+Measure: Controlling High Blood Pressure | Code: CBP | Steward: HEDIS | Population: Adults | Method: Hybrid | Rate: 55.1% | Numerator: 551 | Denominator: 1000
+Measure: Child and Adolescent Well-Care Visits | Code: WCV | Steward: Child Core Set | Population: Children | Method: Administrative | Rate: 47.8% | Numerator: 956 | Denominator: 2000
+
+== PERFORMANCE IMPROVEMENT PROJECTS ==
+Plan: Superior HealthPlan | Title: Improving Timeliness of Postpartum Care | Focus: Maternal Health | Baseline: 42.0% | Goal: 55.0% | Most Recent: 49.5% | Validation: Partially Met
+Plan: Amerigroup Texas | Title: Reducing Avoidable Emergency Department Visits | Focus: Access to Care | Baseline: 38.0% | Goal: 30.0% | Most Recent: 34.2% | Validation: Met
+
+== COMPLIANCE REVIEW ==
+Plan: Superior HealthPlan | Standard: Grievances and Appeals | Determination: Compliant
+Plan: Superior HealthPlan | Standard: Availability of Services | Determination: Partially Compliant
+Plan: Amerigroup Texas | Standard: Grievances and Appeals | Determination: Compliant

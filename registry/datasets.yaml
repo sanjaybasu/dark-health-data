@@ -1,0 +1,145 @@
+# Catalog of "buried" public-health / healthcare dataset families.
+#
+# These are datasets that are *theoretically* public (legally mandated to be
+# disclosed, or already posted somewhere) but *practically* inaccessible for
+# large-scale science because they live as unstructured PDFs scattered across
+# hundreds of state/agency/hospital websites.
+#
+# Each entry is intentionally explicit about `existing_efforts` so we can prove
+# we are filling a gap, not duplicating work. `status: active` means a connector
+# is implemented; `planned` means it is on the roadmap.
+
+datasets:
+  - id: eqr
+    name: Medicaid External Quality Review (EQR) Technical Reports
+    description: >-
+      A national, row-level dataset of validated performance measures,
+      performance improvement projects, and compliance findings extracted from
+      state Medicaid/CHIP External Quality Review technical reports.
+    status: active
+    priority: 1
+    issuer: State Medicaid agencies via External Quality Review Organizations (EQROs)
+    legal_basis: 42 CFR 438.350-.364 (mandatory annual EQR + public technical report)
+    cadence: annual
+    format: PDF (typically 40-300 pages)
+    est_volume: ~40+ states x 1-3 reports/yr; thousands of plan-measure rows each
+    underserved_relevance: high
+    medicaid: true
+    why_buried: >
+      Reports must be posted publicly but there is no central, machine-readable
+      repository; they are scattered across state Medicaid/health-department
+      sites in heterogeneous PDF layouts. MACPAC recommended in 2025 that CMS
+      build a central repository, confirming none exists.
+    contents:
+      - Validated performance measures (HEDIS, Adult/Child Core Set, CAHPS)
+      - Performance Improvement Projects (PIPs)
+      - Compliance / standards review determinations
+      - Network adequacy and encounter-data validation findings
+    existing_efforts:
+      - name: CMS Medicaid.gov EQR page
+        what: Posts links/protocols, no structured extraction of report contents
+        overlap: none (we structure the contents they only link to)
+      - name: T-MSIS Analytic Files (TAF) / Cornell Medicaid Atlas / MDLN
+        what: Structured *claims* data -> spending & utilization measures
+        overlap: none (claims, not narrative quality/compliance text; complementary and linkable)
+      - name: MACPAC EQR analyses
+        what: Periodic issue briefs; not an open, row-level dataset
+        overlap: none
+    planned_records: [eqr_quality_measure, eqr_pip, eqr_compliance]
+
+  - id: chna
+    name: Hospital Community Health Needs Assessments (CHNA) + Implementation Strategies
+    description: >-
+      Prioritized community health needs and committed hospital investments
+      extracted from triennial tax-exempt-hospital CHNA reports and
+      implementation strategies.
+    status: active
+    priority: 2
+    issuer: Tax-exempt hospitals
+    legal_basis: IRC 501(r)(3) / ACA 9007 (triennial CHNA + implementation strategy)
+    cadence: triennial
+    format: PDF on individual hospital websites
+    est_volume: ~2,900 nonprofit hospitals
+    underserved_relevance: high
+    medicaid: false
+    why_buried: >
+      ~95% are public but scattered across thousands of hospital sites with no
+      registry; priorities, identified needs, and committed investments are
+      narrative text, not data.
+    contents:
+      - Prioritized community health needs
+      - Community input / SDOH data cited
+      - Planned implementation strategies and investments
+    existing_efforts:
+      - name: Hilltop Institute Community Benefit State Law Profiles
+        what: Tracks state community-benefit *law*, not extracted CHNA contents
+        overlap: none
+      - name: Academic content analyses (e.g., violent-cities CHNA studies)
+        what: One-off manual coding of small samples; not a maintained open dataset
+        overlap: none (we automate + maintain at national scale)
+
+  - id: mmrc
+    name: Maternal Mortality Review Committee (MMRC) Reports
+    description: >-
+      Pregnancy-related death counts, causes, preventability determinations, and
+      committee recommendations extracted from published state MMRC reports.
+    status: active
+    priority: 2
+    issuer: State maternal mortality review committees
+    cadence: annual / biennial
+    format: PDF
+    est_volume: ~38+ states with MMRCs
+    underserved_relevance: high
+    medicaid: false
+    why_buried: >
+      Case-level cause-of-death determinations, contributing factors, and
+      prevention recommendations are published as narrative state reports with
+      no common schema; CDC ERASE MM aggregates some but report-level detail and
+      recommendations remain in PDFs.
+    contents:
+      - Pregnancy-related death counts and causes
+      - Preventability determinations and contributing factors
+      - Committee recommendations
+    existing_efforts:
+      - name: CDC ERASE MM / MMRIA
+        what: Standardized abstraction inside the public-health system, not an open dataset of published report recommendations
+        overlap: partial-input (we surface the *published* reports + recommendations; coordinate, do not duplicate abstraction)
+
+  - id: waiver_1115
+    name: Medicaid Section 1115 Demonstration Waivers (applications + evaluations)
+    description: >-
+      Eligibility/benefit terms, special terms and conditions, and independent
+      evaluation findings extracted from Section 1115 waiver PDFs on Medicaid.gov.
+    status: planned
+    priority: 3
+    issuer: State Medicaid agencies / CMS
+    format: PDF on Medicaid.gov
+    underserved_relevance: high
+    medicaid: true
+    why_buried: >
+      Applications, approvals, special terms & conditions, and independent
+      evaluations are long PDFs; eligibility/benefit changes and evaluation
+      findings are not in any analyzable table.
+    existing_efforts:
+      - name: KFF 1115 waiver tracker
+        what: Curated summaries/status, not row-level extraction of terms & evaluation outcomes
+        overlap: low
+
+  - id: nursing_home_2567
+    name: Nursing Home Statements of Deficiencies (CMS Form 2567)
+    description: >-
+      Narrative surveyor findings (the "why" behind deficiency tags) extracted
+      from CMS Form 2567 statements of deficiencies.
+    status: planned
+    priority: 3
+    issuer: State survey agencies / CMS
+    format: PDF (narrative surveyor findings)
+    underserved_relevance: medium
+    medicaid: true
+    why_buried: >
+      Care Compare exposes deficiency *tags/counts*; the narrative surveyor
+      findings (the "why") live in 2567 PDFs and are not analyzable at scale.
+    existing_efforts:
+      - name: CMS Care Compare / Provider Data Catalog
+        what: Structured tags & star ratings, not the narrative findings text
+        overlap: low (we add the narrative layer)

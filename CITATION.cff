@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use this dataset or pipeline, please cite it."
+title: "Dark Health Data: AI-extracted open datasets from buried public-health documents"
+abstract: >-
+  An open-source pipeline that uses LLM-based structured extraction to convert
+  buried public-health and healthcare documents (PDFs) into tidy, provenance-
+  stamped, research-ready datasets. First release: Medicaid External Quality
+  Review (EQR) technical reports.
+type: software
+authors:
+  - family-names: Basu
+    given-names: Sanjay
+    affiliation: Waymark
+  - name: "Dark Health Data contributors"
+keywords:
+  - public health
+  - Medicaid
+  - dark data
+  - external quality review
+  - health equity
+  - open data
+  - document extraction
+license: Apache-2.0
+version: 0.3.0
+date-released: "2026-05-30"
+url: "https://github.com/sanjaybasu/dark-health-data"

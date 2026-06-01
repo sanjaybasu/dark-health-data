@@ -1,0 +1,32 @@
+# Real, verified state Medicaid EQR technical reports (multi-state national pull).
+# 17 verified direct PDFs + 4 attempted (curl-blocked but may resolve via browser UA).
+sources:
+  - {state: TX, program: Medicaid & CHIP managed care, eqro: HSAG, reports: [{year: 2024, url: "https://www.hhs.texas.gov/sites/default/files/documents/eqro-annual-technical-report-contract-sfy-2024.pdf"}]}
+  - {state: OH, program: Medicaid managed care, eqro: IPRO, reports: [{year: 2024, url: "https://dam.assets.ohio.gov/image/upload/medicaid.ohio.gov/About%20Us/QualityStrategy/Measures/QualityReview/EQR_Tech_Report_SFY23-24_F2.pdf"}]}
+  - {state: AZ, program: Medicaid (AHCCCS) managed care, eqro: HSAG, reports: [{year: 2023, url: "https://www.azahcccs.gov/Resources/Downloads/EQR/2023/CYE2023ExternalQualityReviewAnnualTechnicalReport.pdf"}]}
+  - {state: WA, program: Apple Health (Medicaid) managed care, eqro: Comagine Health, reports: [{year: 2024, url: "https://www.hca.wa.gov/assets/billers-and-providers/eqr-technical-report-2025.pdf"}]}
+  - {state: FL, program: Statewide Medicaid Managed Care, eqro: HSAG, reports: [{year: 2024, url: "https://ahca.myflorida.com/content/download/26439/file/FL_2023-2024_EQR_TechRpt_F1.pdf"}]}
+  - {state: PA, program: HealthChoices (Medicaid) managed care, eqro: IPRO, reports: [{year: 2023, url: "https://www.pa.gov/content/dam/copapwp-pagov/en/dhs/documents/services/disabilities-aging/documents/acap/PA-Statewide-Annual-Technical-Report_2023-Final.pdf"}]}
+  - {state: IL, program: HealthChoice Illinois managed care, eqro: HSAG, reports: [{year: 2024, url: "https://hfs.illinois.gov/content/dam/soi/en/web/hfs/sitecollectiondocuments/il2025eqrtechnicalreport.pdf"}]}
+  - {state: VA, program: Cardinal Care managed care, eqro: HSAG, reports: [{year: 2024, url: "https://www.dmas.virginia.gov/media/ibjjoec0/2024-cardinal-care-annual-technical-report.pdf"}]}
+  - {state: LA, program: Healthy Louisiana managed care, eqro: IPRO/ABH, reports: [{year: 2024, url: "https://ldh.la.gov/assets/medicaid/EQRO/2025/ABH_LA_SFY2024_ATR-MCO_F1.pdf"}]}
+  - {state: MD, program: HealthChoice managed care, eqro: Qlarant, reports: [{year: 2024, url: "https://health.maryland.gov/mmcp/healthchoice/Documents/annual-technical-reports/Calendar%20Year%202024%20MARYLAND%20ATR_FINAL_508.pdf"}]}
+  - {state: TN, program: TennCare managed care, eqro: HSAG, reports: [{year: 2024, url: "https://www.tn.gov/content/dam/tn/tenncare/archive/EQROTechnicalReport24.pdf"}]}
+  - {state: WI, program: Family Care/Partnership (LTSS) managed care, eqro: MetaStar, reports: [{year: 2024, url: "https://www.dhs.wisconsin.gov/familycare/statefedreqs/eqro2024-25.pdf"}]}
+  - {state: SC, program: Healthy Connections managed care, eqro: Constellation Quality Health, reports: [{year: 2024, url: "https://www.scdhhs.gov/sites/dhhs/files/documents/SCEQR_2024-2025%20EQR%20Comprehensive%20Technical%20Report-compressed.pdf"}]}
+  - {state: MS, program: MississippiCAN managed care, eqro: HSAG, reports: [{year: 2024, url: "https://medicaid.ms.gov/wp-content/uploads/2024/04/MS-EQR-Annual-Comprehensive-Technical-Report-2023-2024.pdf"}]}
+  - {state: NE, program: Heritage Health managed care, eqro: HSAG, reports: [{year: 2024, url: "https://dhhs.ne.gov/Documents/HHP_NE2023_EQR%20Technical_Report_F1.pdf"}]}
+  - {state: OK, program: SoonerSelect managed care, eqro: HSAG, reports: [{year: 2024, url: "https://oklahoma.gov/content/dam/ok/en/okhca/soonerselect/docs/reports/SoonerSelect%20Annual%20External%20Quality%20Review%20Technical%20Report%20for%20the%202024-2025%20Reporting%20Cycle.pdf"}]}
+  - {state: OR, program: Oregon Health Plan CCOs, eqro: HSAG, reports: [{year: 2023, url: "https://www.oregon.gov/oha/HSD/OHP/DataReportsDocs/External%20Quality%20Review%20Technical%20Report%202023.pdf"}]}
+  - {state: NY, program: Medicaid managed care, eqro: IPRO, reports: [{year: 2023, url: "https://www.health.ny.gov/statistics/health_care/managed_care/plans/reports/docs/2023_mmc_harp_snp_report.pdf"}]}
+  - {state: CO, program: Health First Colorado managed care, eqro: HSAG, reports: [{year: 2024, url: "https://hcpf.colorado.gov/sites/hcpf/files/2024%20External%20Quality%20Review%20Technical%20Report%20for%20Health%20First%20Colorado.pdf"}]}
+  - {state: MI, program: Medicaid managed care, eqro: HSAG, reports: [{year: 2024, url: "https://www.michigan.gov/mdhhs/-/media/Project/Websites/mdhhs/Assistance-Programs/Medicaid-BPHASA/Other-Prov-Specific-Page-Docs/SFY-2023-2024-External-Quality-Review-Technical-Report.pdf"}]}
+  - {state: KY, program: Medicaid managed care, eqro: IPRO, reports: [{year: 2024, url: "https://www.chfs.ky.gov/agencies/dms/DMSMCOReports/2025%20FY%20Comprehensive%20Evaluation%20Summary.pdf"}]}
+  - {state: NJ, program: NJ FamilyCare managed care, eqro: IPRO, reports: [{year: 2023, url: "https://nj.gov/humanservices/dmahs/news/2023%20Core%20Medicaid-MLTSS%20Annual%20Technical%20Report.pdf"}]}
+  - {state: KS, program: KanCare managed care, eqro: KFMC, reports: [{year: 2022, url: "https://www.kancare.ks.gov/docs/default-source/quality-measurement/eqro-reports/historical/2021-2022-annual-eqr-technical-report.pdf?sfvrsn=336a501b_6"}]}
+  - {state: IN, program: Hoosier Healthwise/HIP managed care, eqro: Burns & Associates (Myers and Stauffer), reports: [{year: 2024, url: "https://www.in.gov/fssa/ompp/files/2024_OMPP_Annual_Technical_Report.pdf"}]}
+  - {state: NC, program: NC Medicaid managed care, eqro: NC EQRO, landing_url: "https://medicaid.ncdhhs.gov/reports/quality-management-and-improvement", render: true, landing_max: 2}
+  - {state: GA, program: Georgia Families managed care, eqro: HSAG, landing_url: "https://dch.georgia.gov/medicaid-quality-reporting", render: true, landing_max: 2}
+  - {state: IA, program: IA Health Link managed care, eqro: IA EQRO, landing_url: "https://hhs.iowa.gov/about/data-reports/medicaid-reports", render: true, landing_max: 2}
+  - {state: MN, program: Minnesota Medicaid managed care, eqro: MN EQRO, landing_url: "https://mn.gov/dhs/partners-and-providers/news-initiatives-reports-workgroups/minnesota-health-care-programs/managed-care-reporting/quality.jsp", render: true, landing_max: 2}
+  - {state: MO, program: MO HealthNet managed care, eqro: Primaris, landing_url: "https://mydss.mo.gov/MHD/MC-external-quality-reviews", render: true, landing_max: 2}

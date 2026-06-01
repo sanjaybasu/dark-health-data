@@ -1,0 +1,20 @@
+MATERNAL MORTALITY REVIEW COMMITTEE REPORT
+State: CA
+Report Period: 2019-2021
+Report Year: 2023
+Committee: State Maternal Mortality Review Committee (synthetic example)
+
+This is a SYNTHETIC document created to demonstrate the Dark Health Data
+pipeline offline. Numbers are illustrative and describe no real population.
+
+== FINDINGS ==
+Group: Overall | Pregnancy-Related Deaths: 120 | Ratio: 22.4 | Preventable: 84% | Leading Cause: Cardiovascular conditions
+Group: Black non-Hispanic | Pregnancy-Related Deaths: 38 | Ratio: 51.2 | Preventable: 90% | Leading Cause: Cardiovascular conditions
+Group: Hispanic | Pregnancy-Related Deaths: 41 | Ratio: 18.7 | Preventable: 82% | Leading Cause: Hemorrhage
+Group: White non-Hispanic | Pregnancy-Related Deaths: 33 | Ratio: 16.9 | Preventable: 80% | Leading Cause: Mental health conditions
+
+== RECOMMENDATIONS ==
+Recommendation: Implement standardized obstetric hemorrhage and hypertension safety bundles | Category: Clinical/quality | Target: Facility
+Recommendation: Extend postpartum Medicaid coverage to 12 months | Category: Policy/coverage | Target: Policy
+Recommendation: Integrate behavioral health and substance use screening across the perinatal period | Category: Mental/behavioral health | Target: Provider
+Recommendation: Strengthen risk-appropriate care and maternal levels-of-care designation | Category: Systems of care | Target: Community

@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+
+# secrets
+.env
+
+# generated pipeline outputs (raw cache + processed datasets are reproducible)
+data/raw/
+data/cache/
+data/processed/
+
+# validation gold samples (regenerable via `dhd sample`)
+gold/
+
+# local-only working area (manuscript, drafts) kept out of the public repo
+paper/
+private/

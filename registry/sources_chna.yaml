@@ -1,0 +1,11 @@
+# Source seeds for the CHNA connector.
+# Default is a SYNTHETIC fixture so the pipeline runs offline. Add real entries
+# with `url:` to a hospital's published CHNA PDF and run with `--extractor llm`.
+
+sources:
+  - hospital: Riverside Community Medical Center (synthetic example)
+    state: CA
+    reports:
+      - year: 2023
+        title: "Riverside CHNA (synthetic demo fixture)"
+        local_path: data/sample/synthetic_chna_2023.txt

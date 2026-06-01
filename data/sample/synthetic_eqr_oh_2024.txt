@@ -1,0 +1,26 @@
+EXTERNAL QUALITY REVIEW TECHNICAL REPORT
+State: OH
+Program: Medicaid managed care
+Reporting Year: 2024
+EQRO: (synthetic example for demonstration only)
+
+This is a SYNTHETIC document created to demonstrate the Dark Health Data
+pipeline offline. Numbers are illustrative and do not describe any real plan.
+
+== PERFORMANCE MEASURES ==
+Plan: CareSource
+Measure: Well-Child Visits in the First 30 Months of Life | Code: W30 | Steward: HEDIS | Population: Children | Method: Hybrid | Rate: 60.4% | Numerator: 1208 | Denominator: 2000
+Measure: Controlling High Blood Pressure | Code: CBP | Steward: HEDIS | Population: Adults | Method: Hybrid | Rate: 63.9% | Numerator: 639 | Denominator: 1000
+Measure: Follow-Up After Hospitalization for Mental Illness (7-Day) | Code: FUH | Steward: HEDIS | Population: Total | Method: Administrative | Rate: 41.2% | Numerator: 412 | Denominator: 1000
+Measure: Follow-Up After Hospitalization for Mental Illness (7-Day) | Code: FUH | Steward: HEDIS | Population: Total | Method: Administrative | Rate: 41.2% | Numerator: 412 | Denominator: 1000
+
+Plan: Buckeye Health Plan
+Measure: Well-Child Visits in the First 30 Months of Life | Code: W30 | Steward: HEDIS | Population: Children | Method: Hybrid | Rate: 54.7% | Numerator: 1094 | Denominator: 2000
+Measure: Breast Cancer Screening | Code: BCS | Steward: Adult Core Set | Population: Adults | Method: Administrative | Rate: 51.0% | Numerator: 1020 | Denominator: 2000
+
+== PERFORMANCE IMPROVEMENT PROJECTS ==
+Plan: CareSource | Title: Increasing Behavioral Health Follow-Up | Focus: Behavioral Health | Baseline: 35.0% | Goal: 50.0% | Most Recent: 41.2% | Validation: Partially Met
+
+== COMPLIANCE REVIEW ==
+Plan: CareSource | Standard: Grievances and Appeals | Determination: Compliant
+Plan: Buckeye Health Plan | Standard: Quality Assessment and Performance Improvement | Determination: Compliant

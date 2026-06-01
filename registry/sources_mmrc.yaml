@@ -1,0 +1,11 @@
+# Source seeds for the MMRC connector.
+# Default is a SYNTHETIC fixture so the pipeline runs offline. Add real entries
+# with `url:` to a state's published MMRC report PDF and run with `--extractor llm`.
+
+sources:
+  - state: CA
+    committee: State Maternal Mortality Review Committee (synthetic example)
+    reports:
+      - year: 2023
+        title: "State MMRC report (synthetic demo fixture)"
+        local_path: data/sample/synthetic_mmrc_2023.txt

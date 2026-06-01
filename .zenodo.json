@@ -1,0 +1,15 @@
+{
+  "title": "Dark Health Data: AI-extracted open datasets from buried public-health documents",
+  "description": "An open-source pipeline that turns buried public-health and healthcare documents (PDFs) into open, research-ready datasets via AI extraction, with a verification layer (grounding, symbolic + LNN-inspired neurosymbolic constraints, heterogeneous ensemble, and a conformal selective-acceptance gate). Connectors: Medicaid External Quality Review (EQR) technical reports, hospital Community Health Needs Assessments (CHNA), and Maternal Mortality Review Committee (MMRC) reports.",
+  "upload_type": "software",
+  "access_right": "open",
+  "license": "Apache-2.0",
+  "creators": [
+    { "name": "Basu, Sanjay", "affiliation": "Waymark" }
+  ],
+  "keywords": [
+    "public health", "Medicaid", "dark data", "external quality review",
+    "community health needs assessment", "maternal mortality", "health equity",
+    "open data", "document extraction", "neurosymbolic", "conformal prediction"
+  ]
+}

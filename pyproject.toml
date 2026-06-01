@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dark-health-data"
+version = "0.3.0"
+description = "Turn buried public-health documents (PDFs) into open, research-ready datasets via AI extraction, with a neurosymbolic + conformal verification layer. Connectors: Medicaid EQR, hospital CHNAs, MMRC reports."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Dark Health Data contributors" }]
+keywords = ["public health", "medicaid", "dark data", "pdf extraction", "health equity", "open data"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: Apache Software License",
+  "Intended Audience :: Science/Research",
+  "Topic :: Scientific/Engineering :: Information Analysis",
+]
+dependencies = [
+  "pydantic>=2.6",
+  "pyyaml>=6.0",
+  "requests>=2.28",
+]
+
+[project.optional-dependencies]
+pdf = ["pdfplumber>=0.11", "pymupdf>=1.24"]
+ocr = ["pdf2image>=1.17", "pytesseract>=0.3.10"]
+llm = ["anthropic>=0.40"]
+vlm = ["openai>=1.40"]
+crawl = ["playwright>=1.40"]
+parquet = ["pyarrow>=15"]
+verify = ["z3-solver>=4.12"]
+dev = ["pytest>=7", "ruff>=0.4"]
+all = ["pdfplumber>=0.11", "pymupdf>=1.24", "anthropic>=0.40", "openai>=1.40", "pyarrow>=15"]
+
+[project.scripts]
+dhd = "dark_health_data.pipeline:main"
+
+[project.urls]
+Homepage = "https://github.com/sanjaybasu/dark-health-data"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

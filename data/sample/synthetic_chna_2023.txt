@@ -1,0 +1,21 @@
+COMMUNITY HEALTH NEEDS ASSESSMENT
+Hospital: Riverside Community Medical Center (synthetic example)
+EIN: 00-0000000
+State: CA
+Report Year: 2023
+
+This is a SYNTHETIC document created to demonstrate the Dark Health Data
+pipeline offline. Content is illustrative and describes no real hospital.
+
+== IDENTIFIED NEEDS ==
+Need: Mental health and substance use services | Domain: Mental health | Priority: yes | Rank: 1
+Need: Access to primary and specialty care | Domain: Access to care | Priority: yes | Rank: 2
+Need: Housing instability and homelessness | Domain: Housing/SDOH | Priority: yes | Rank: 3
+Need: Chronic disease (diabetes, hypertension) | Domain: Chronic disease | Priority: yes | Rank: 4
+Need: Maternal and infant health | Domain: Maternal/child health | Priority: no
+
+== IMPLEMENTATION STRATEGIES ==
+Need: Mental health and substance use services | Strategy: Expand integrated behavioral health and tele-behavioral health capacity | Objective: Increase behavioral health visits 20% by 2026
+Need: Access to primary and specialty care | Strategy: Open two community-based clinics in underserved ZIP codes | Objective: Add 8,000 primary care visits/year
+Need: Housing instability and homelessness | Strategy: Fund medical respite beds and partner with local housing agencies | Objective: Serve 300 patients/year in respite
+Need: Chronic disease (diabetes, hypertension) | Strategy: Community health worker–led chronic disease self-management program | Objective: Enroll 1,000 patients/year

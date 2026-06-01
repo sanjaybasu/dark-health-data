@@ -1,0 +1,4 @@
+# Keep the sample fixtures under version control; ignore generated outputs.
+raw/
+cache/
+processed/

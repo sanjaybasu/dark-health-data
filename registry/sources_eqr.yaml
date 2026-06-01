@@ -1,0 +1,13 @@
+# Default (offline) sources: synthetic fixtures so the demo/CI run with no network.
+# Real, verified multi-state report URLs live in sources_eqr_live.yaml.example.
+sources:
+  - state: TX
+    program: Medicaid managed care
+    eqro: "(synthetic example)"
+    reports:
+      - {year: 2024, title: "TX EQR Technical Report (synthetic demo fixture)", local_path: data/sample/synthetic_eqr_tx_2024.txt}
+  - state: OH
+    program: Medicaid managed care
+    eqro: "(synthetic example)"
+    reports:
+      - {year: 2024, title: "OH EQR Technical Report (synthetic demo fixture)", local_path: data/sample/synthetic_eqr_oh_2024.txt}
