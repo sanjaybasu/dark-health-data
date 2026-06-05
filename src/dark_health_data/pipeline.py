@@ -166,6 +166,27 @@ def _cmd_evaluate(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_agreement(args: argparse.Namespace) -> int:
+    from pathlib import Path
+
+    from .evaluation import agreement
+
+    r = agreement(Path(args.a), Path(args.b))
+    if r.get("n_overlap", 0) == 0:
+        print("No row_uids were labelled by both reviewers — nothing to compare.")
+        return 1
+    c = r["contingency"]
+    print(f"overlap (rows labelled by both): {r['n_overlap']}")
+    print(f"percent agreement: {r['percent_agreement']}")
+    print(f"Cohen's kappa:     {r['cohen_kappa']}")
+    print(f"Gwet's AC1:        {r['gwet_ac1']}  (more stable at high agreement)")
+    print(f"  both correct={c['both_correct']}  both incorrect={c['both_incorrect']}  "
+          f"A+/B-={c['A_correct_B_incorrect']}  A-/B+={c['A_incorrect_B_correct']}")
+    d = r["disagreement_row_uids"]
+    print(f"disagreements to adjudicate ({len(d)}): {', '.join(d) if d else 'none'}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="dhd", description="Dark Health Data pipeline")
     sub = parser.add_subparsers(dest="cmd", required=True)
@@ -198,6 +219,14 @@ def main(argv: list[str] | None = None) -> int:
     p_eval.add_argument("--delta", type=float, default=0.05, help="confidence level for the bound")
     p_eval.add_argument("--stratify", default=None, help="column for per-stratum calibration")
     p_eval.set_defaults(func=_cmd_evaluate)
+
+    p_agree = sub.add_parser(
+        "agreement",
+        help="inter-rater agreement (Cohen's kappa, Gwet's AC1) on two reviewers' overlap",
+    )
+    p_agree.add_argument("--a", required=True, help="first reviewer's filled CSV (row_uid + correct)")
+    p_agree.add_argument("--b", required=True, help="second reviewer's filled CSV (row_uid + correct)")
+    p_agree.set_defaults(func=_cmd_agreement)
 
     args = parser.parse_args(argv)
     return args.func(args)

@@ -58,6 +58,8 @@ Per-row labeling measures precision, not whether rows were **missed**. To measur
 
 ## 8. Toolkit status
 - **Today:** `dhd sample` (stratified) + `dhd evaluate` (row accuracy + Wilson CI,
-  risk–coverage curve, conformal calibration overall and per stratum).
-- **To add for full rigor** (see ROADMAP): two-rater agreement (κ / AC1), document-level
-  recall mode, per-field P/R/F1, and the CMS Core Set criterion-validity join.
+  risk–coverage curve, conformal calibration overall and per stratum) + `dhd agreement`
+  (two-rater Cohen's κ and Gwet's AC1 on the reviewers' overlap, with the 2×2 contingency
+  and the disagreeing rows to adjudicate).
+- **To add for full rigor** (see ROADMAP): document-level recall mode, per-field P/R/F1,
+  and the CMS Core Set criterion-validity join.

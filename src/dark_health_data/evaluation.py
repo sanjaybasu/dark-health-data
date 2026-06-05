@@ -189,3 +189,67 @@ def evaluate(
     out.write_text(json.dumps(report, indent=2), encoding="utf-8")
     report["report_path"] = str(out)
     return report
+
+
+# ---------------------------------------------------------------------------
+# Inter-rater agreement (two reviewers, binary `correct`)
+# ---------------------------------------------------------------------------
+
+
+def _load_labels(path: Path) -> dict[str, bool]:
+    """row_uid -> bool for rows whose `correct` parses to 1/0 (others skipped)."""
+    labels: dict[str, bool] = {}
+    with path.open(encoding="utf-8") as fh:
+        for row in csv.DictReader(fh):
+            uid = (row.get("row_uid") or "").strip()
+            val = _parse_correct(row.get("correct", ""))
+            if uid and val is not None:
+                labels[uid] = val
+    return labels
+
+
+def _chance_corrected(p_o: float, p_e: float) -> float:
+    """(p_o - p_e) / (1 - p_e), with the degenerate p_e==1 case defined sensibly."""
+    if 1 - p_e == 0:
+        return 1.0 if p_o == 1.0 else 0.0
+    return (p_o - p_e) / (1 - p_e)
+
+
+def agreement(path_a: Path, path_b: Path) -> dict[str, Any]:
+    """Inter-rater agreement between two reviewers on their overlapping rows.
+
+    Each input CSV has `row_uid` and a filled `correct` column. Agreement is
+    computed only on row_uids both reviewers labelled (the shared overlap), over
+    the binary scale {correct, incorrect}. Returns percent agreement, Cohen's
+    kappa, Gwet's AC1 (more stable when agreement is high), the 2x2 contingency,
+    and the row_uids where the reviewers disagreed (for adjudication).
+    """
+    a, b = _load_labels(path_a), _load_labels(path_b)
+    shared = sorted(set(a) & set(b))
+    n = len(shared)
+    if n == 0:
+        return {"n_overlap": 0, "note": "no row_uids labelled by both reviewers"}
+
+    av = [a[u] for u in shared]
+    bv = [b[u] for u in shared]
+    p_o = sum(1 for x, y in zip(av, bv) if x == y) / n
+    pa, pb = sum(av) / n, sum(bv) / n  # each reviewer's P(correct)
+
+    p_e_cohen = pa * pb + (1 - pa) * (1 - pb)
+    pi = (pa + pb) / 2  # mean marginal for the "correct" category
+    p_e_gwet = 2 * pi * (1 - pi)  # Gwet AC1 chance term for a binary scale
+
+    disagree = [u for u in shared if a[u] != b[u]]
+    return {
+        "n_overlap": n,
+        "percent_agreement": round(p_o, 4),
+        "cohen_kappa": round(_chance_corrected(p_o, p_e_cohen), 4),
+        "gwet_ac1": round(_chance_corrected(p_o, p_e_gwet), 4),
+        "contingency": {
+            "both_correct": sum(1 for x, y in zip(av, bv) if x and y),
+            "both_incorrect": sum(1 for x, y in zip(av, bv) if not x and not y),
+            "A_correct_B_incorrect": sum(1 for x, y in zip(av, bv) if x and not y),
+            "A_incorrect_B_correct": sum(1 for x, y in zip(av, bv) if not x and y),
+        },
+        "disagreement_row_uids": disagree,
+    }
