@@ -1,0 +1,20 @@
+SECTION 1115 DEMONSTRATION INDEPENDENT EVALUATION (synthetic example)
+State: NC
+Demonstration: Healthy Opportunities Pilots (synthetic example)
+Report Year: 2024
+Evaluation Period: 2022-2024
+Evaluator: Independent evaluator (synthetic example)
+
+This is a SYNTHETIC document created to demonstrate the Dark Health Data
+pipeline offline. Numbers are illustrative and describe no real population.
+
+== FINDINGS ==
+Domain: Food/Nutrition | Intervention: Medically tailored meals | Outcome: Food insecurity prevalence | Population: Adults with chronic conditions | Direction: improved | Value: -12.5 | Unit: percentage points | Significance: p<0.05 | Result: Food insecurity fell among enrollees relative to a matched comparison group
+Domain: Food/Nutrition | Intervention: Produce prescription | Outcome: Emergency department visits | Population: Adults | Direction: improved | Value: -8.0 | Unit: percent | Significance: p<0.05 | Result: ED visits declined after enrollment
+Domain: Food/Nutrition | Intervention: Food and nutrition benefit | Outcome: HbA1c | Population: Adults with diabetes | Direction: mixed | Result: Improvement among high-utilizers but no detectable change overall
+Domain: Housing | Intervention: Housing navigation and tenancy support | Outcome: Avoidable hospitalizations | Population: Adults | Direction: no significant change | Significance: NS | Result: No detectable change within the evaluation window
+
+== RECOMMENDATIONS ==
+Recommendation: Streamline enrollment and referral pathways between health plans and community-based organizations | Category: Operations
+Recommendation: Standardize food and nutrition service definitions and units across pilots to enable cross-site comparison | Category: Measurement
+Recommendation: Sustain produce-prescription funding given early reductions in acute care use | Category: Policy/financing

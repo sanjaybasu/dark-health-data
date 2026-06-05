@@ -1,0 +1,12 @@
+# Source seeds for the Section 1115 demonstration evaluation connector.
+# Default is a SYNTHETIC fixture so the pipeline runs offline. Add real entries
+# with `url:` to a published 1115 evaluation report PDF and run `--extractor llm`.
+
+sources:
+  - state: NC
+    demonstration: Healthy Opportunities Pilots (synthetic example)
+    evaluator: (synthetic example)
+    reports:
+      - year: 2024
+        title: "1115 demonstration evaluation (synthetic demo fixture)"
+        local_path: data/sample/synthetic_waiver_1115_2024.txt

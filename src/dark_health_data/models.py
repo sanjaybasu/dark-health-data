@@ -332,6 +332,79 @@ class MMRCRecommendation(ExtractionRecord):
         return v.strip()
 
 
+# ---------------------------------------------------------------------------
+# Medicaid Section 1115 demonstration evaluation records
+# ---------------------------------------------------------------------------
+
+
+WAIVER_1115_DIRECTIONS = {
+    "improved", "no significant change", "worsened", "mixed", "not estimated", "descriptive",
+}
+
+
+class Waiver1115Finding(ExtractionRecord):
+    """One evaluation finding from a Section 1115 demonstration evaluation report.
+
+    Grain: (state, demonstration, intervention, outcome, population, report_year).
+    Built to support cross-state synthesis of what demonstrations tested (especially
+    health-related social needs such as food/nutrition) and what the evaluations found.
+    """
+
+    record_type: str = "waiver_1115_finding"
+
+    state: str
+    demonstration_name: str = Field(..., description="the 1115 demonstration, e.g. 'Healthy Opportunities Pilots'")
+    waiver_id: Optional[str] = Field(None, description="CMS demonstration number if printed, e.g. '11-W-00313/4'")
+    report_year: Optional[int] = None
+    evaluation_period: Optional[str] = Field(None, description="period the evaluation covers, e.g. '2022-2024'")
+    evaluator: Optional[str] = Field(None, description="independent evaluator, if named")
+    intervention: Optional[str] = Field(None, description="service tested, e.g. 'Medically tailored meals'")
+    domain: Optional[str] = Field(
+        None, description="normalized domain, e.g. 'Food/Nutrition', 'Housing', 'Transportation'"
+    )
+    outcome_measure: Optional[str] = Field(
+        None, description="outcome studied, e.g. 'Food insecurity', 'ED visits', 'HbA1c'"
+    )
+    population: Optional[str] = None
+    effect_direction: Optional[str] = Field(
+        None, description="improved / no significant change / worsened / mixed / not estimated / descriptive"
+    )
+    value: Optional[float] = Field(None, description="reported effect estimate, if quantified")
+    value_unit: Optional[str] = Field(None, description="unit of `value`, e.g. 'percentage points', 'percent'")
+    significance: Optional[str] = Field(None, description="significance as printed, e.g. 'p<0.05', 'NS'")
+    result: Optional[str] = Field(None, description="short finding as printed/paraphrased")
+
+    @field_validator("state")
+    @classmethod
+    def _strip_state(cls, v: str) -> str:
+        return v.strip()
+
+    @model_validator(mode="after")
+    def _checks(self) -> "Waiver1115Finding":
+        if self.report_year is not None and not (1990 <= self.report_year <= 2035):
+            self.flag(f"implausible report_year: {self.report_year}", fail=True)
+        if self.effect_direction and self.effect_direction.strip().lower() not in WAIVER_1115_DIRECTIONS:
+            self.flag(f"unrecognized effect_direction: {self.effect_direction}")
+        return self
+
+
+class Waiver1115Recommendation(ExtractionRecord):
+    """A recommendation or lesson from a Section 1115 demonstration evaluation."""
+
+    record_type: str = "waiver_1115_recommendation"
+
+    state: str
+    demonstration_name: Optional[str] = None
+    report_year: Optional[int] = None
+    recommendation: str
+    category: Optional[str] = Field(None, description="topic, e.g. 'Operations', 'Measurement', 'Policy/financing'")
+
+    @field_validator("state")
+    @classmethod
+    def _strip_state(cls, v: str) -> str:
+        return v.strip()
+
+
 # Registry of record types -> the table they curate into.
 RECORD_TABLE = {
     "eqr_quality_measure": "eqr_quality_measures",
@@ -341,4 +414,6 @@ RECORD_TABLE = {
     "chna_strategy": "chna_implementation_strategies",
     "mmrc_finding": "mmrc_findings",
     "mmrc_recommendation": "mmrc_recommendations",
+    "waiver_1115_finding": "waiver_1115_findings",
+    "waiver_1115_recommendation": "waiver_1115_recommendations",
 }

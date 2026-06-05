@@ -106,23 +106,30 @@ datasets:
         overlap: partial-input (we surface the *published* reports + recommendations; coordinate, do not duplicate abstraction)
 
   - id: waiver_1115
-    name: Medicaid Section 1115 Demonstration Waivers (applications + evaluations)
+    name: Medicaid Section 1115 Demonstration Evaluations
     description: >-
-      Eligibility/benefit terms, special terms and conditions, and independent
-      evaluation findings extracted from Section 1115 waiver PDFs on Medicaid.gov.
-    status: planned
+      Evaluation findings (intervention, outcome, population, effect direction and
+      size) and recommendations extracted from Section 1115 demonstration evaluation
+      reports, with emphasis on health-related social needs (food/nutrition, housing,
+      transportation).
+    status: active
     priority: 3
-    issuer: State Medicaid agencies / CMS
-    format: PDF on Medicaid.gov
+    issuer: State Medicaid agencies / CMS (independent evaluators)
+    format: PDF on Medicaid.gov and state sites
     underserved_relevance: high
     medicaid: true
-    why_buried: >
-      Applications, approvals, special terms & conditions, and independent
-      evaluations are long PDFs; eligibility/benefit changes and evaluation
-      findings are not in any analyzable table.
+    why_buried: >-
+      Interim and summative evaluations are long narrative PDFs; the services tested
+      and what the evaluations found are not in any analyzable, cross-state table.
+    planned_records:
+      - waiver_1115_finding
+      - waiver_1115_recommendation
     existing_efforts:
       - name: KFF 1115 waiver tracker
-        what: Curated summaries/status, not row-level extraction of terms & evaluation outcomes
+        what: Curated summaries/status, not row-level extraction of evaluation findings
+        overlap: low
+      - name: Health Affairs Scholar survey of 1115 nutrition demonstrations (2024)
+        what: Narrative survey of scope; not a maintained row-level findings dataset
         overlap: low
 
   - id: nursing_home_2567

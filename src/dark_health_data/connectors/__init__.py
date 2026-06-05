@@ -9,11 +9,13 @@ from .base import CandidateDoc, Connector
 from .chna import CHNAConnector
 from .eqr import EQRConnector
 from .mmrc import MMRCConnector
+from .waiver_1115 import Waiver1115Connector
 
 CONNECTORS: dict[str, Connector] = {
     EQRConnector.dataset_id: EQRConnector(),
     CHNAConnector.dataset_id: CHNAConnector(),
     MMRCConnector.dataset_id: MMRCConnector(),
+    Waiver1115Connector.dataset_id: Waiver1115Connector(),
 }
 
 

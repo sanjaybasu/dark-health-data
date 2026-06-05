@@ -1,0 +1,22 @@
+# Real Section 1115 demonstration evaluation reports (verify URLs before a run;
+# CMS/state sites reorganize). Copy to sources_waiver_1115.yaml to use.
+# These NC Healthy Opportunities Pilots reports cover food/nutrition, housing, and
+# transportation interventions — the health-related social needs evaluations of
+# greatest interest for cross-state synthesis.
+sources:
+  - state: NC
+    demonstration: NC Medicaid Reform — Healthy Opportunities Pilots
+    evaluator: NC DHHS / independent evaluator
+    reports:
+      - year: 2024
+        title: "Healthy Opportunities Pilots Interim Evaluation Report"
+        url: "https://www.medicaid.gov/medicaid/section-1115-demonstrations/downloads/nc-medicaid-reform-cms-approved-healthy-opportunities-pilots-interim-evltn-rpt.pdf"
+      - year: 2023
+        title: "Healthy Opportunities Pilots Rapid Cycle Assessment"
+        url: "https://www.medicaid.gov/medicaid/section-1115-demonstrations/downloads/nc-medicaid-reform-demo-healthy-opportunities-pilots-rapid-cycle-assessment.pdf"
+  # Other HRSN/food-and-nutrition demonstrations to add (find the current evaluation
+  # PDF on each state's Medicaid.gov demonstration page before enabling):
+  #   - CA  CalAIM (Community Supports / "in lieu of services")
+  #   - MA  MassHealth (Flexible Services)
+  #   - OR  Oregon Health Plan (HRSN climate/nutrition supports)
+  #   - WA  Washington Medicaid Transformation

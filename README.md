@@ -135,12 +135,13 @@ lives in [`registry/datasets.yaml`](registry/datasets.yaml).
 | `eqr` | Medicaid External Quality Review technical reports | **active** |
 | `chna` | Hospital Community Health Needs Assessments | **active** |
 | `mmrc` | Maternal Mortality Review Committee reports | **active** |
-| `waiver_1115` | Medicaid 1115 demonstration waivers + evaluations | planned |
+| `waiver_1115` | Medicaid Section 1115 demonstration evaluations (food/nutrition, housing) | **active** |
 | `nursing_home_2567` | Nursing-home statements of deficiencies (CMS-2567) | planned |
 
 ```bash
-dhd run --dataset chna --extractor rule   # hospital community needs (demo)
-dhd run --dataset mmrc --extractor rule   # maternal mortality review (demo)
+dhd run --dataset chna        --extractor rule   # hospital community needs (demo)
+dhd run --dataset mmrc        --extractor rule   # maternal mortality review (demo)
+dhd run --dataset waiver_1115 --extractor rule   # 1115 demonstration evaluations (demo)
 ```
 
 For EQR, the connector can also **crawl a state landing page** for report PDFs
