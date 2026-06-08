@@ -29,6 +29,123 @@ def _dataset_meta(dataset_id: str) -> dict[str, Any]:
     return {"id": dataset_id, "name": dataset_id}
 
 
+# ---------------------------------------------------------------------------
+# Incremental merge: expansion only ever ADDS coverage.
+#
+# A wave runs only NEW sources and unions the result with the already-published
+# canonical dataset (the dist/<id>-v*.zip), keyed by document source URL. A doc
+# present in the new run REPLACES its prior version; every other prior document
+# is retained untouched. So a flaky fetch this run can only affect the new
+# additions -- it can never regress data we already shipped -- and we never
+# re-extract (re-pay for) documents already in the canonical set.
+# ---------------------------------------------------------------------------
+
+
+def _record_classmap(connector) -> dict[str, Any]:
+    """record_type string -> record model class, for rehydrating serialized rows."""
+    return {cls.model_fields["record_type"].default: cls for cls in connector.record_models}
+
+
+def _select_canonical_zip(dataset_id: str):
+    """Newest published dist/<id>-v<M>.<m>.<p>.zip by SEMANTIC version (not lexical:
+    v0.10.0 > v0.9.0), ties broken by mtime. Returns a Path or None if none exist."""
+    import re
+
+    dist = settings.repo_root / "dist"
+    if not dist.exists():
+        return None
+    ranked = []
+    for p in dist.glob(f"{dataset_id}-v*.zip"):
+        m = re.search(rf"{re.escape(dataset_id)}-v(\d+)\.(\d+)\.(\d+)", p.name)
+        version = tuple(int(x) for x in m.groups()) if m else (-1, -1, -1)
+        ranked.append((version, p.stat().st_mtime, p))
+    if not ranked:
+        return None
+    ranked.sort()
+    return ranked[-1][2]
+
+
+def _load_canonical(dataset_id: str, connector) -> tuple[list, list[SourceDocument]]:
+    """Rehydrate (records, documents) from the newest published dist zip.
+
+    Returns ([], []) ONLY when no prior release exists (a legitimate first run). If a
+    zip IS present but can't be read, is missing its tables, yields zero records, or
+    holds an unknown record_type, we RAISE rather than return an empty canonical --
+    a silent empty would let the merge republish only the new wave, which is exactly
+    the regression this design exists to prevent.
+    """
+    import csv
+    import io
+    import json
+    import zipfile
+
+    zp = _select_canonical_zip(dataset_id)
+    if zp is None:
+        return [], []
+    try:
+        zf = zipfile.ZipFile(zp)
+        names = zf.namelist()
+        rj = next((n for n in names if n.endswith("records.jsonl")), None)
+        dc = next((n for n in names if n.endswith("documents.csv")), None)
+        records_text = zf.read(rj).decode("utf-8") if rj else None
+        docs_text = zf.read(dc).decode("utf-8") if dc else None
+    except Exception as exc:
+        raise RuntimeError(f"cannot read canonical zip {zp}: {type(exc).__name__}: {exc}") from exc
+    if records_text is None or docs_text is None:
+        raise RuntimeError(f"{zp.name} is missing records.jsonl and/or documents.csv")
+
+    classmap = _record_classmap(connector)
+    records = []
+    for line in records_text.splitlines():
+        if not line.strip():
+            continue
+        row = json.loads(line)
+        rt = row.get("record_type")
+        cls = classmap.get(rt)
+        if cls is None:
+            raise RuntimeError(
+                f"{zp.name}: record_type {rt!r} is not in the '{dataset_id}' connector's "
+                f"record_models -- refusing to silently drop canonical records")
+        records.append(cls.model_validate(row))
+    if not records:
+        raise RuntimeError(f"{zp.name} contains zero records -- refusing to merge against it")
+    docs = [
+        SourceDocument.model_validate({k: (v if v != "" else None) for k, v in row.items()})
+        for row in csv.DictReader(io.StringIO(docs_text))
+    ]
+    return records, docs
+
+
+def _merge_records_docs(existing_records, existing_docs, new_records, new_docs):
+    """Union by stable document id -- the sha256 of the document bytes, which is
+    always present and equals each record's ``provenance.source_document_id``. A
+    document re-extracted this wave REPLACES its prior records; every other prior
+    document is kept untouched. Keying on the content hash (not ``source_url``) means
+    URL-less documents and URL variants (trailing slash / query string) dedup
+    correctly. Pure function (no I/O) so it is unit-testable."""
+    new_ids = {d.document_id for d in new_docs}
+    kept_records = [r for r in existing_records
+                    if r.provenance.source_document_id not in new_ids]
+    kept_docs = [d for d in existing_docs if d.document_id not in new_ids]
+    return kept_records + new_records, kept_docs + new_docs
+
+
+def _aggregate_report(records) -> dict[str, Any]:
+    """Recompute the summary over a (possibly merged) record set without re-verifying:
+    canonical records keep their stored trust/QA, new records were just verified."""
+    from .models import QAStatus
+
+    trusts = [r.trust_score for r in records if r.trust_score is not None]
+    return {
+        "n_records": len(records),
+        "qa_pass": sum(1 for r in records if r.qa_status == QAStatus.PASS),
+        "qa_warn": sum(1 for r in records if r.qa_status == QAStatus.WARN),
+        "qa_fail": sum(1 for r in records if r.qa_status == QAStatus.FAIL),
+        "mean_trust": round(sum(trusts) / len(trusts), 4) if trusts else None,
+        "review_recommended": sum(1 for r in records if r.review_recommended),
+    }
+
+
 def run_dataset(
     dataset_id: str,
     *,
@@ -120,6 +237,7 @@ def run_dataset_batch(
     ocr: bool = False,
     poll_seconds: int = 60,
     max_wait: int = 86400,
+    merge: bool = False,
     write_parquet: bool = True,
     verbose: bool = True,
 ) -> dict[str, Any]:
@@ -131,6 +249,11 @@ def run_dataset_batch(
     ``data/cache/batches/<id>.json`` records the batch ids so re-running resumes
     (re-polls + collects) without resubmitting -- no re-billing of succeeded chunks.
     Failed requests (errored/expired/canceled) are unbilled and reported as dropped.
+
+    With ``merge=True`` the run is treated as an *expansion*: the freshly extracted
+    records are unioned (by document source URL) with the already-published canonical
+    dataset before curation, so it only ever adds coverage and never regresses or
+    re-extracts prior documents. Point the source registry at NEW documents only.
     """
     import json
     import time
@@ -216,14 +339,31 @@ def run_dataset_batch(
         f"(unbilled errored/expired/canceled)")
 
     report = verify_records(records, connector=connector, doc_texts=doc_texts)
-    log(f"[verify]   {report['n_records']} records — pass={report['qa_pass']} "
+    log(f"[verify]   {report['n_records']} new records — pass={report['qa_pass']} "
         f"warn={report['qa_warn']} fail={report['qa_fail']} | mean_trust={report['mean_trust']}")
+
+    if merge:
+        ex_records, ex_docs = _load_canonical(dataset_id, connector)
+        n_new_docs = len(docs)
+        records, docs = _merge_records_docs(ex_records, ex_docs, records, docs)
+        replaced_docs = len(ex_docs) - (len(docs) - n_new_docs)
+        report = _aggregate_report(records)
+        log(f"[merge]    canonical {len(ex_docs)} doc(s) + {n_new_docs} new "
+            f"(replaced {replaced_docs}) -> {report['n_records']} records, "
+            f"{len(docs)} document(s)")
+
     out_dir = settings.processed_dir / dataset_id
     curated = curate(records, docs, out_dir, write_parquet=write_parquet)
     meta = _dataset_meta(dataset_id)
     write_data_dictionary(out_dir, connector.record_models)
     write_dataset_card(out_dir, meta, {**curated, **report})
     write_croissant(out_dir, meta, curated)
+    if merge:
+        # Update the canonical dist zip atomically with processed/, so the NEXT
+        # --merge wave chains off this output instead of a stale prior release.
+        from .release import package_dataset
+        zp = package_dataset(dataset_id, settings.repo_root / "dist")
+        log(f"[publish]  re-packaged canonical {zp.name} so the next --merge wave chains off it")
     manifest.unlink(missing_ok=True)  # success: clear so a fresh run re-submits
     log(f"[publish]  wrote tables + metadata to {out_dir}")
     return {"dataset_id": dataset_id, "validation": report, "curation": curated,
@@ -310,6 +450,7 @@ def _cmd_batch(args: argparse.Namespace) -> int:
         args.dataset,
         limit=args.limit,
         ocr=args.ocr,
+        merge=args.merge,
         write_parquet=not args.no_parquet,
         poll_seconds=args.poll_seconds,
         max_wait=args.max_wait,
@@ -370,6 +511,9 @@ def main(argv: list[str] | None = None) -> int:
     p_batch.add_argument("--dataset", required=True, help="dataset id, e.g. 'chna'")
     p_batch.add_argument("--limit", type=int, default=None, help="max documents to process")
     p_batch.add_argument("--ocr", action="store_true", help="OCR pages with no text layer")
+    p_batch.add_argument("--merge", action="store_true",
+                         help="expansion mode: union new records with the published canonical "
+                              "dataset by document URL (adds coverage, never regresses/re-extracts)")
     p_batch.add_argument("--no-parquet", action="store_true", help="skip parquet output")
     p_batch.add_argument("--poll-seconds", type=int, default=60, help="seconds between batch status polls")
     p_batch.add_argument("--max-wait", type=int, default=86400, help="max seconds to wait before deferring")
