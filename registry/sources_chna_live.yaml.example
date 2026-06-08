@@ -1,0 +1,9 @@
+# Real hospital CHNA reports (verify URLs before a run; hospital sites reorganize).
+# Copy to registry/sources_chna.yaml and run with --extractor llm.
+# These are the sources used to produce the v0.3.0 real chna release.
+sources:
+  - {hospital: Craig Hospital, state: CO, reports: [{year: 2022, url: "https://craighospital.org/wp-content/uploads/2023/01/CHNA-Craig-Hospital-2022-Report.pdf"}]}
+  - {hospital: Southwest General Health Center, state: OH, reports: [{year: 2023, url: "https://www.swgeneral.com/documents/communityHealthAssessment_2023.pdf"}]}
+  - {hospital: Henry Ford Health, state: MI, reports: [{year: 2023, url: "https://www.henryford.com/-/media/files/henry-ford/about/hfh-implementation-plans.pdf"}]}
+  - {hospital: UAB Medicine (Callahan), state: AL, reports: [{year: 2022, url: "https://www.uabmedicine.org/wp-content/uploads/sites/3/2023/02/Callahan-CHNA-2022.pdf"}]}
+  - {hospital: UCHealth University of Colorado, state: CO, reports: [{year: 2022, url: "https://www.uchealth.com/wp-content/uploads/2022/11/UCMC-Community-Health-Needs-Assessment-2023-25.pdf"}]}

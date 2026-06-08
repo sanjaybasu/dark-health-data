@@ -152,7 +152,7 @@ class CHNAConnector(Connector):
     ) -> list[ExtractionRecord]:
         hospital = payload.get("hospital_name") or doc.publisher or "Unknown"
         state = payload.get("state") or doc.jurisdiction
-        year = payload.get("report_year") or doc.report_year
+        year = _to_int(payload.get("report_year")) or doc.report_year
         ein = payload.get("hospital_ein")
         records: list[ExtractionRecord] = []
 
@@ -163,6 +163,8 @@ class CHNAConnector(Connector):
             )
 
         for n in payload.get("identified_needs", []) or []:
+            if not isinstance(n, dict):
+                continue
             records.append(
                 CHNAIdentifiedNeed(
                     provenance=prov(n), hospital_name=hospital, hospital_ein=ein, state=state,
@@ -171,6 +173,8 @@ class CHNAConnector(Connector):
                 )
             )
         for s in payload.get("implementation_strategies", []) or []:
+            if not isinstance(s, dict):
+                continue
             records.append(
                 CHNAImplementationStrategy(
                     provenance=prov(s), hospital_name=hospital, state=state, report_year=year,

@@ -165,7 +165,7 @@ class MMRCConnector(Connector):
     ) -> list[ExtractionRecord]:
         state = payload.get("state") or doc.jurisdiction or "Unknown"
         period = payload.get("report_period")
-        year = payload.get("report_year") or doc.report_year
+        year = _to_int(payload.get("report_year")) or doc.report_year
         records: list[ExtractionRecord] = []
 
         def prov(item: dict[str, Any]) -> Provenance:
@@ -175,6 +175,8 @@ class MMRCConnector(Connector):
             )
 
         for f in payload.get("findings", []) or []:
+            if not isinstance(f, dict):
+                continue
             records.append(
                 MMRCFinding(
                     provenance=prov(f), state=state, report_period=period,
@@ -186,6 +188,8 @@ class MMRCConnector(Connector):
                 )
             )
         for r in payload.get("recommendations", []) or []:
+            if not isinstance(r, dict):
+                continue
             records.append(
                 MMRCRecommendation(
                     provenance=prov(r), state=state, report_year=year,
