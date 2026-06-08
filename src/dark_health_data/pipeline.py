@@ -112,6 +112,124 @@ def run_dataset(
             "documents_failed": failed, "out_dir": str(out_dir)}
 
 
+def run_dataset_batch(
+    dataset_id: str,
+    *,
+    model: str | None = None,
+    limit: int | None = None,
+    ocr: bool = False,
+    poll_seconds: int = 60,
+    max_wait: int = 86400,
+    write_parquet: bool = True,
+    verbose: bool = True,
+) -> dict[str, Any]:
+    """Run a dataset through the Message Batches API (~50% cheaper, latency-tolerant).
+
+    Fetches + extracts text for every candidate, submits all chunks as one (or a few)
+    batches, polls to completion, then maps results back and runs the same
+    verify -> curate -> publish tail as ``run_dataset``. A manifest in
+    ``data/cache/batches/<id>.json`` records the batch ids so re-running resumes
+    (re-polls + collects) without resubmitting -- no re-billing of succeeded chunks.
+    Failed requests (errored/expired/canceled) are unbilled and reported as dropped.
+    """
+    import json
+    import time
+
+    from .connectors import get_connector
+    from .extract.llm import BatchLLMExtractor
+
+    def log(msg: str) -> None:
+        if verbose:
+            print(msg, flush=True)
+
+    connector = get_connector(dataset_id)
+    extractor = BatchLLMExtractor(model=model)
+
+    candidates = discover(dataset_id)
+    if limit:
+        candidates = candidates[:limit]
+
+    items: list[tuple[SourceDocument, str]] = []
+    docs: list[SourceDocument] = []
+    docs_by_id: dict[str, SourceDocument] = {}
+    doc_texts: dict[str, str] = {}
+    for cand in candidates:
+        try:
+            doc = fetch(cand)
+            text = pdf.extract_text(doc.local_path, ocr=ocr)
+            doc.n_pages = text.count("[[PAGE ")
+            doc.content_sha256 = sha256_text(text)
+            items.append((doc, text))
+            docs.append(doc)
+            docs_by_id[doc.document_id] = doc
+            doc_texts[doc.document_id] = text
+        except Exception as exc:
+            log(f"[error]    skipped {cand.jurisdiction or cand.location}: {type(exc).__name__}: {exc}")
+
+    requests, id_map = extractor.build_requests(items, connector)
+    route = {cid: docs_by_id[did] for cid, (did, _i) in id_map.items()}
+    log(f"[batch]    {len(items)} document(s) -> {len(requests)} chunk request(s)")
+    if not requests:
+        return {"dataset_id": dataset_id, "status": "no-requests"}
+
+    client = extractor._client()
+    bdir = settings.cache_dir / "batches"
+    bdir.mkdir(parents=True, exist_ok=True)
+    manifest = bdir / f"{dataset_id}.json"
+
+    batch_ids: list[str] = []
+    if manifest.exists():
+        m = json.loads(manifest.read_text(encoding="utf-8"))
+        if m.get("request_count") == len(requests) and m.get("batch_ids"):
+            batch_ids = m["batch_ids"]
+            log(f"[batch]    resuming {len(batch_ids)} batch(es) from manifest (no resubmit)")
+    if not batch_ids:
+        block = 90000  # stay under the 100k-requests / 256MB per-batch ceilings
+        for i in range(0, len(requests), block):
+            bid = extractor.submit(client, requests[i:i + block])
+            batch_ids.append(bid)
+            log(f"[batch]    submitted {bid} ({len(requests[i:i + block])} requests)")
+        manifest.write_text(json.dumps(
+            {"dataset": dataset_id, "model": extractor.model, "request_count": len(requests),
+             "batch_ids": batch_ids}, indent=2), encoding="utf-8")
+
+    waited, pending = 0, set(batch_ids)
+    while pending and waited <= max_wait:
+        for bid in list(pending):
+            if extractor.poll(client, bid) == "ended":
+                pending.discard(bid)
+                log(f"[batch]    {bid} ended")
+        if pending:
+            time.sleep(poll_seconds)
+            waited += poll_seconds
+    if pending:
+        log(f"[batch]    still processing after {max_wait}s; re-run `dhd batch --dataset "
+            f"{dataset_id}` later to resume (manifest kept).")
+        return {"dataset_id": dataset_id, "status": "pending", "batch_ids": batch_ids}
+
+    records, dropped = [], []
+    for bid in batch_ids:
+        r, d = extractor.collect(client, bid, route, connector)
+        records.extend(r)
+        dropped.extend(d)
+    log(f"[batch]    collected {len(records)} record(s); {len(dropped)} request(s) failed "
+        f"(unbilled errored/expired/canceled)")
+
+    report = verify_records(records, connector=connector, doc_texts=doc_texts)
+    log(f"[verify]   {report['n_records']} records — pass={report['qa_pass']} "
+        f"warn={report['qa_warn']} fail={report['qa_fail']} | mean_trust={report['mean_trust']}")
+    out_dir = settings.processed_dir / dataset_id
+    curated = curate(records, docs, out_dir, write_parquet=write_parquet)
+    meta = _dataset_meta(dataset_id)
+    write_data_dictionary(out_dir, connector.record_models)
+    write_dataset_card(out_dir, meta, {**curated, **report})
+    write_croissant(out_dir, meta, curated)
+    manifest.unlink(missing_ok=True)  # success: clear so a fresh run re-submits
+    log(f"[publish]  wrote tables + metadata to {out_dir}")
+    return {"dataset_id": dataset_id, "validation": report, "curation": curated,
+            "dropped": len(dropped), "out_dir": str(out_dir)}
+
+
 # ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
@@ -187,6 +305,23 @@ def _cmd_agreement(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_batch(args: argparse.Namespace) -> int:
+    summary = run_dataset_batch(
+        args.dataset,
+        limit=args.limit,
+        ocr=args.ocr,
+        write_parquet=not args.no_parquet,
+        poll_seconds=args.poll_seconds,
+        max_wait=args.max_wait,
+    )
+    status = summary.get("status")
+    if status == "pending":
+        print(f"\nBatch(es) still processing: {summary['batch_ids']}. Re-run to resume.")
+    else:
+        print("\nDone:", summary.get("out_dir", status))
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="dhd", description="Dark Health Data pipeline")
     sub = parser.add_subparsers(dest="cmd", required=True)
@@ -227,6 +362,18 @@ def main(argv: list[str] | None = None) -> int:
     p_agree.add_argument("--a", required=True, help="first reviewer's filled CSV (row_uid + correct)")
     p_agree.add_argument("--b", required=True, help="second reviewer's filled CSV (row_uid + correct)")
     p_agree.set_defaults(func=_cmd_agreement)
+
+    p_batch = sub.add_parser(
+        "batch",
+        help="run a dataset via the Message Batches API (~50%% cheaper, async bulk; resumable)",
+    )
+    p_batch.add_argument("--dataset", required=True, help="dataset id, e.g. 'chna'")
+    p_batch.add_argument("--limit", type=int, default=None, help="max documents to process")
+    p_batch.add_argument("--ocr", action="store_true", help="OCR pages with no text layer")
+    p_batch.add_argument("--no-parquet", action="store_true", help="skip parquet output")
+    p_batch.add_argument("--poll-seconds", type=int, default=60, help="seconds between batch status polls")
+    p_batch.add_argument("--max-wait", type=int, default=86400, help="max seconds to wait before deferring")
+    p_batch.set_defaults(func=_cmd_batch)
 
     args = parser.parse_args(argv)
     return args.func(args)
