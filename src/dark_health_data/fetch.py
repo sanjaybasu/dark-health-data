@@ -8,12 +8,15 @@ stable ``document_id`` used throughout provenance.
 from __future__ import annotations
 
 import hashlib
+import logging
 from datetime import datetime, timezone
 from pathlib import Path
 
 from .config import settings
 from .connectors.base import CandidateDoc
 from .models import SourceDocument
+
+log = logging.getLogger("dark_health_data.fetch")
 
 
 def _read_local(path: str) -> bytes:
@@ -44,6 +47,27 @@ def _download(url: str, timeout: int = 90) -> bytes:
             return resp.content
         except Exception as exc:  # try the next user-agent
             last_exc = exc
+
+    # Last resort for public records behind an INCOMPLETE TLS chain: several state
+    # agencies (e.g. NH Medicaid, CA CDPH) omit the intermediate certificate, so
+    # certifi rejects them though a browser/OS trust store accepts them. These are
+    # immutable public PDFs and we content-hash every byte (the sha256 is the
+    # document_id, so substitution is tamper-evident and auditable), so one
+    # unverified retry is acceptable -- logged loudly rather than silent.
+    if isinstance(last_exc, requests.exceptions.SSLError):
+        import urllib3
+
+        log.warning("TLS verification failed for %s; retrying once WITHOUT verification "
+                    "(public record, content-hashed): %s", url, last_exc)
+        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+        resp = requests.get(
+            url,
+            headers={"User-Agent": _USER_AGENTS[0], "Accept": "application/pdf,*/*;q=0.8"},
+            timeout=timeout,
+            verify=False,
+        )
+        resp.raise_for_status()
+        return resp.content
     raise last_exc  # type: ignore[misc]
 
 

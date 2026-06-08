@@ -14,9 +14,42 @@ sources:
       - year: 2023
         title: "Healthy Opportunities Pilots Rapid Cycle Assessment"
         url: "https://www.medicaid.gov/medicaid/section-1115-demonstrations/downloads/nc-medicaid-reform-demo-healthy-opportunities-pilots-rapid-cycle-assessment.pdf"
-  # Other HRSN/food-and-nutrition demonstrations to add (find the current evaluation
-  # PDF on each state's Medicaid.gov demonstration page before enabling):
+  # --- Multi-state expansion (curl-verified direct PDFs; produced the v0.3.0 release) ---
+  - state: NJ
+    demonstration: NJ FamilyCare Comprehensive 1115
+    evaluator: Rutgers Center for State Health Policy
+    reports:
+      - {year: 2022, title: "NJ 1115 Interim Evaluation (Chakravarty)", url: "https://dms.cshp.rutgers.edu/sites/default/files/2024-05/2022-report-chakravarty-816.pdf"}
+      - {year: 2022, title: "NJ 1115 Interim Evaluation — SUD (Lloyd)", url: "https://dms.cshp.rutgers.edu/sites/default/files/2024-08/2022-report-lloyd-1108.pdf"}
+  - state: IN
+    demonstration: Healthy Indiana Plan (HIP) 1115
+    evaluator: Burns & Associates (HMA) / The Lewin Group
+    reports:
+      - {year: 2024, title: "Indiana SUD 1115 Interim Evaluation", url: "https://www.in.gov/fssa/hip/files/IndianaSUD-InterimEval2024.pdf"}
+      - {year: 2023, title: "Indiana SUD Demonstration Summative Evaluation", url: "https://www.in.gov/fssa/hip/files/INSUDDemonstrationSummativeEvaluation.pdf"}
+      - {year: 2023, title: "Indiana SMI Summative Evaluation", url: "https://www.in.gov/fssa/hip/files/CMSApprovedSMISummativeEvaluationReport.pdf"}
+  - state: MI
+    demonstration: Healthy Michigan Plan 1115
+    evaluator: University of Michigan IHPI
+    reports:
+      - {year: 2025, title: "Healthy Michigan Plan Summative Evaluation", url: "https://www.michigan.gov/mdhhs/-/media/Project/Websites/mdhhs/Assistance-Programs/Medicaid-BPHASA/HMP-Docs/Healthy-Michigan-Plan_Summative-Evaluation-Report_Approval_signed.pdf"}
+  - state: OR
+    demonstration: Oregon Health Plan 1115
+    evaluator: Center for Health Systems Effectiveness (OHSU)
+    reports:
+      - {year: 2025, title: "Oregon Health Plan 1115 Summative Evaluation", url: "https://www.oregon.gov/oha/HSD/Medicaid-Policy/Documents/Summative-Report-033125.pdf"}
+      - {year: 2021, title: "Oregon 2017-2022 Waiver Evaluation", url: "https://www.ohsu.edu/sites/default/files/2022-02/Oregon%202017-2022%20Waiver%20Report.pdf"}
+  - state: NM
+    demonstration: New Mexico Centennial Care / Turquoise Care 1115
+    evaluator: NM Human Services Department
+    reports:
+      - {year: 2022, title: "New Mexico 1115 Interim Evaluation Report", url: "https://www.hsd.state.nm.us/wp-content/uploads/NMWaiverEval_InterimRpt_F1-1.pdf"}
+  - state: TN
+    demonstration: TennCare III 1115
+    evaluator: Guidehouse Inc.
+    reports:
+      - {year: 2024, title: "TennCare 1115 Interim Evaluation Report", url: "https://www.tn.gov/content/dam/tn/tenncare/documents2/CMSApprovedInterimEvaluationReport.pdf"}
+  # Behind bot-blocking on medicaid.gov/mass.gov this round (browser fetch only):
   #   - CA  CalAIM (Community Supports / "in lieu of services")
   #   - MA  MassHealth (Flexible Services)
-  #   - OR  Oregon Health Plan (HRSN climate/nutrition supports)
   #   - WA  Washington Medicaid Transformation
