@@ -1,0 +1,14 @@
+# Real nursing-home CMS-2567 Statements of Deficiencies.
+# Unlike EQR/1115, full 2567 narratives are not posted as tidy per-facility URLs:
+# obtain them from CMS provider data (data.cms.gov "Nursing Home" downloads, which
+# include deficiency text), state survey-agency sites, or FOIA. ProPublica's Nursing
+# Home Inspect indexes the same narratives (see existing_efforts in datasets.yaml).
+# Fill `local_path` with a downloaded 2567 PDF, or `url:` if your source serves one.
+sources:
+  - state: OH
+    facility: "<facility name>"
+    reports:
+      - year: 2024
+        title: "CMS-2567 Statement of Deficiencies"
+        # local_path: data/raw/<your_downloaded_2567>.pdf
+        # url: "https://<state survey agency or CMS source>/<2567>.pdf"

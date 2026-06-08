@@ -405,6 +405,70 @@ class Waiver1115Recommendation(ExtractionRecord):
         return v.strip()
 
 
+# ---------------------------------------------------------------------------
+# Nursing-home Statement of Deficiencies (CMS Form 2567) records
+# ---------------------------------------------------------------------------
+
+
+# CMS scope/severity grid letters (scope: isolated/pattern/widespread ×
+# severity: minimal/potential-harm/actual-harm/immediate-jeopardy).
+NURSING_HOME_SCOPE_SEVERITY = set("ABCDEFGHIJKL")
+
+
+class NursingHomeDeficiency(ExtractionRecord):
+    """One deficiency cited on a nursing-home Statement of Deficiencies (CMS-2567).
+
+    Grain: (state, ccn/facility, ftag, report_year). Captures the surveyor's
+    narrative finding -- the "why" behind a deficiency that Care Compare's tag/severity
+    counts omit.
+    """
+
+    record_type: str = "nursing_home_deficiency"
+
+    facility_name: str
+    ccn: Optional[str] = Field(None, description="CMS Certification Number (6-char provider id) if printed")
+    state: str
+    survey_date: Optional[str] = Field(None, description="survey/inspection date as printed")
+    report_year: Optional[int] = None
+    ftag: Optional[str] = Field(None, description="federal deficiency tag, e.g. 'F689'")
+    ftag_description: Optional[str] = Field(None, description="the tag's regulatory title as printed")
+    scope_severity: Optional[str] = Field(None, description="single scope/severity letter A-L")
+    deficiency_description: Optional[str] = Field(None, description="surveyor's narrative finding")
+
+    @field_validator("state")
+    @classmethod
+    def _upper_state(cls, v: str) -> str:
+        return v.strip().upper()
+
+    @model_validator(mode="after")
+    def _checks(self) -> "NursingHomeDeficiency":
+        if self.report_year is not None and not (1990 <= self.report_year <= 2035):
+            self.flag(f"implausible report_year: {self.report_year}", fail=True)
+        if self.scope_severity:
+            self.scope_severity = self.scope_severity.strip().upper()
+            if self.scope_severity not in NURSING_HOME_SCOPE_SEVERITY:
+                self.flag(f"scope_severity not a valid A-L letter: {self.scope_severity}")
+        return self
+
+
+class NursingHomePlanOfCorrection(ExtractionRecord):
+    """A facility's plan of correction for a cited deficiency (CMS-2567)."""
+
+    record_type: str = "nursing_home_plan_of_correction"
+
+    facility_name: str
+    state: str
+    report_year: Optional[int] = None
+    ftag: Optional[str] = Field(None, description="the deficiency tag this corrects, e.g. 'F689'")
+    correction: str
+    completion_date: Optional[str] = None
+
+    @field_validator("state")
+    @classmethod
+    def _upper_state(cls, v: str) -> str:
+        return v.strip().upper()
+
+
 # Registry of record types -> the table they curate into.
 RECORD_TABLE = {
     "eqr_quality_measure": "eqr_quality_measures",
@@ -416,4 +480,6 @@ RECORD_TABLE = {
     "mmrc_recommendation": "mmrc_recommendations",
     "waiver_1115_finding": "waiver_1115_findings",
     "waiver_1115_recommendation": "waiver_1115_recommendations",
+    "nursing_home_deficiency": "nursing_home_deficiencies",
+    "nursing_home_plan_of_correction": "nursing_home_plans_of_correction",
 }

@@ -137,16 +137,22 @@ datasets:
     description: >-
       Narrative surveyor findings (the "why" behind deficiency tags) extracted
       from CMS Form 2567 statements of deficiencies.
-    status: planned
+    status: active
     priority: 3
     issuer: State survey agencies / CMS
     format: PDF (narrative surveyor findings)
     underserved_relevance: medium
     medicaid: true
-    why_buried: >
-      Care Compare exposes deficiency *tags/counts*; the narrative surveyor
-      findings (the "why") live in 2567 PDFs and are not analyzable at scale.
+    why_buried: >-
+      Care Compare exposes deficiency tags/counts; the narrative surveyor findings
+      (the "why") live in 2567 PDFs and are not analyzable at scale.
+    planned_records:
+      - nursing_home_deficiency
+      - nursing_home_plan_of_correction
     existing_efforts:
       - name: CMS Care Compare / Provider Data Catalog
         what: Structured tags & star ratings, not the narrative findings text
         overlap: low (we add the narrative layer)
+      - name: ProPublica Nursing Home Inspect
+        what: Searchable index of deficiency narratives; a search UI, not a structured/FAIR row-level dataset
+        overlap: medium (similar narratives; we add structured, provenance-stamped records + plans of correction)

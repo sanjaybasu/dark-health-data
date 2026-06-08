@@ -63,7 +63,7 @@ Full metadata (legal basis, cadence, volume, existing efforts) is in
 | **Hospital CHNAs** | Prioritized community needs + committed investments | High (community/SDOH) | ~95% public but uncatalogued across thousands of hospital sites; only one-off manual studies exist ([*PMC* 2023](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10285662/)) |
 | **Maternal Mortality Review Committee reports** | Cause-of-death, preventability, recommendations | High (maternal equity) | State reports with no common schema; CDC ERASE MM standardizes internal abstraction, not published-report recommendations |
 | **Medicaid 1115 demonstration evaluations** *(built)* | Tested services + evaluation findings (food/nutrition, housing, transportation) | High (Medicaid) | Long PDFs on Medicaid.gov; trackers summarize status, not row-level findings |
-| **Nursing-home statements of deficiency (CMS-2567)** | Narrative surveyor findings | Medium (dual-eligibles) | Care Compare exposes tags/counts, not the narrative "why" |
+| **Nursing-home statements of deficiency (CMS-2567)** *(built)* | Narrative surveyor findings + plans of correction | Medium (dual-eligibles) | Care Compare exposes tags/counts, not the narrative "why" (ProPublica indexes narratives; we add structured records) |
 | **Health-insurance rate filings (SERFF)** | Rate justification, assumptions | Medium | Decentralized state filings, mostly PDF |
 | **SAMHSA block-grant applications/reports** | Behavioral-health spending plans | High | Long PDFs; not analyzable |
 | **Opioid-settlement expenditure reports** | How settlement dollars are spent | High | Heterogeneous state/county PDFs |

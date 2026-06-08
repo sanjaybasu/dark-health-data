@@ -1,0 +1,11 @@
+# Source seeds for the nursing-home CMS-2567 connector.
+# Default is a SYNTHETIC fixture so the pipeline runs offline. Add real entries
+# with `url:` to a published 2567 PDF and run with `--extractor llm`.
+
+sources:
+  - state: OH
+    facility: Maplewood Care Center (synthetic example)
+    reports:
+      - year: 2024
+        title: "CMS-2567 Statement of Deficiencies (synthetic demo fixture)"
+        local_path: data/sample/synthetic_nursing_home_2567_2024.txt

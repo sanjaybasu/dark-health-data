@@ -1,0 +1,20 @@
+NURSING HOME STATEMENT OF DEFICIENCIES (CMS FORM 2567) (synthetic example)
+Facility: Maplewood Care Center (synthetic example)
+CCN: 365999
+State: OH
+Survey Date: 2024-03-14
+Report Year: 2024
+
+This is a SYNTHETIC document created to demonstrate the Dark Health Data
+pipeline offline. Findings are illustrative and describe no real facility.
+
+== DEFICIENCIES ==
+F-Tag: F689 | Description: Free of Accident Hazards/Supervision/Devices | Scope/Severity: G | Finding: A resident with a documented fall-risk care plan was left unattended during a transfer and sustained a fall with injury; staff did not follow the facility transfer protocol
+F-Tag: F686 | Description: Treatment/Services to Prevent/Heal Pressure Ulcers | Scope/Severity: D | Finding: Two residents developed facility-acquired Stage 2 pressure injuries without documented repositioning per the care plan
+F-Tag: F812 | Description: Food Procurement, Store/Prepare/Serve - Sanitary | Scope/Severity: E | Finding: Kitchen staff stored ready-to-eat foods above raw poultry and the walk-in cooler logged temperatures above 41F on three days
+F-Tag: F656 | Description: Develop/Implement Comprehensive Care Plan | Scope/Severity: D | Finding: Comprehensive care plans for three sampled residents were not updated after significant changes in condition
+
+== PLANS OF CORRECTION ==
+Tag: F689 | Correction: Re-educated all nursing staff on the safe-transfer protocol and instituted a daily fall-risk huddle | Completion: 2024-04-15
+Tag: F686 | Correction: Audited repositioning documentation for all at-risk residents and added a skin-integrity checklist | Completion: 2024-04-15
+Tag: F812 | Correction: Reorganized walk-in storage per food-safety guidance and added twice-daily temperature checks | Completion: 2024-04-01
