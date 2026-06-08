@@ -84,6 +84,11 @@ def _custom_id(document_id: str, chunk_idx: int) -> str:
 
 class LLMExtractor(Extractor):
     name = "llm"
+    # The ExtractionMethod recorded in provenance. Distinct from `name`: the batch
+    # subclass keeps name="llm_batch" for the registry but records method="llm" -- a
+    # batched extraction is the same extraction as the synchronous one (same model,
+    # same prompt), just async, and "llm_batch" is not a valid ExtractionMethod enum.
+    provenance_method = "llm"
 
     def __init__(self, model: str | None = None, max_chunks: int | None = None):
         self.model = model or settings.llm_model
@@ -134,7 +139,7 @@ class LLMExtractor(Extractor):
         return {
             "source_document_id": doc.document_id,
             "source_url": doc.source_url,
-            "method": self.name,
+            "method": self.provenance_method,
             "model_name": self.model,
             "extractor_version": connector.version,
         }

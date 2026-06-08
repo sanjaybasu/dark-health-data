@@ -8,6 +8,8 @@ from __future__ import annotations
 
 from dark_health_data.connectors.chna import CHNAConnector
 from dark_health_data.connectors.mmrc import MMRCConnector
+from dark_health_data.connectors.nursing_home_2567 import NursingHome2567Connector
+from dark_health_data.connectors.waiver_1115 import Waiver1115Connector
 from dark_health_data.models import SourceDocument
 
 _PROV = dict(source_document_id="d", source_url=None, method="llm",
@@ -35,3 +37,27 @@ def test_mmrc_payload_robustness():
     }
     recs = MMRCConnector().records_from_payload(payload, doc, dict(_PROV))
     assert len(recs) == 2
+
+
+def test_waiver_payload_robustness():
+    doc = SourceDocument(document_id="d", dataset_id="waiver_1115", jurisdiction="NJ", report_year=2022)
+    payload = {
+        "report_year": "<UNKNOWN>",  # must coerce, not crash int field
+        "findings": ["junk", {"intervention": "Food box", "domain": "nutrition"}],
+        "recommendations": ["junk", {"recommendation": "Extend HRSN services"}],
+    }
+    recs = Waiver1115Connector().records_from_payload(payload, doc, dict(_PROV))
+    assert len(recs) == 2
+    assert all(r.report_year == 2022 for r in recs)  # fell back to doc year
+
+
+def test_nursing_2567_payload_robustness():
+    doc = SourceDocument(document_id="d", dataset_id="nursing_home_2567", jurisdiction="FL", report_year=2024)
+    payload = {
+        "report_year": "<UNKNOWN>",
+        "deficiencies": ["junk", {"ftag": "F684", "deficiency_description": "Quality of care"}],
+        "plans_of_correction": ["junk", {"correction": "Retrain staff"}],
+    }
+    recs = NursingHome2567Connector().records_from_payload(payload, doc, dict(_PROV))
+    assert len(recs) == 2
+    assert all(r.report_year == 2024 for r in recs)

@@ -150,7 +150,11 @@ class CHNAConnector(Connector):
     def records_from_payload(
         self, payload: dict[str, Any], doc: SourceDocument, provenance_base: dict[str, Any]
     ) -> list[ExtractionRecord]:
-        hospital = payload.get("hospital_name") or doc.publisher or "Unknown"
+        # The model emits "<UNKNOWN>" (a truthy string) for chunks that don't repeat
+        # the hospital name (common mid-document); fall back to the source hospital
+        # (doc.publisher) rather than letting that placeholder leak into the data.
+        hosp = (payload.get("hospital_name") or "").strip()
+        hospital = hosp if hosp and hosp.upper() != "<UNKNOWN>" else (doc.publisher or "Unknown")
         state = doc.jurisdiction or payload.get("state")
         year = _to_int(payload.get("report_year")) or doc.report_year
         ein = payload.get("hospital_ein")

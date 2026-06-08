@@ -174,7 +174,7 @@ class Waiver1115Connector(Connector):
     ) -> list[ExtractionRecord]:
         state = doc.jurisdiction or payload.get("state") or "Unknown"
         demo = payload.get("demonstration_name") or doc.program or "Unknown demonstration"
-        year = payload.get("report_year") or doc.report_year
+        year = _to_int(payload.get("report_year")) or doc.report_year
         period = payload.get("evaluation_period")
         evaluator = payload.get("evaluator") or doc.publisher
         waiver_id = payload.get("waiver_id")

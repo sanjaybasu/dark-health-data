@@ -155,7 +155,7 @@ class NursingHome2567Connector(Connector):
         state = doc.jurisdiction or payload.get("state") or "Unknown"
         ccn = payload.get("ccn")
         survey_date = payload.get("survey_date")
-        year = payload.get("report_year") or doc.report_year
+        year = _to_int(payload.get("report_year")) or doc.report_year
         records: list[ExtractionRecord] = []
 
         def prov(item: dict[str, Any]) -> Provenance:
