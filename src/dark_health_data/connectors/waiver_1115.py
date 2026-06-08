@@ -172,7 +172,7 @@ class Waiver1115Connector(Connector):
     def records_from_payload(
         self, payload: dict[str, Any], doc: SourceDocument, provenance_base: dict[str, Any]
     ) -> list[ExtractionRecord]:
-        state = payload.get("state") or doc.jurisdiction or "Unknown"
+        state = doc.jurisdiction or payload.get("state") or "Unknown"
         demo = payload.get("demonstration_name") or doc.program or "Unknown demonstration"
         year = payload.get("report_year") or doc.report_year
         period = payload.get("evaluation_period")

@@ -152,7 +152,7 @@ class NursingHome2567Connector(Connector):
         self, payload: dict[str, Any], doc: SourceDocument, provenance_base: dict[str, Any]
     ) -> list[ExtractionRecord]:
         facility = payload.get("facility_name") or doc.publisher or "Unknown facility"
-        state = payload.get("state") or doc.jurisdiction or "Unknown"
+        state = doc.jurisdiction or payload.get("state") or "Unknown"
         ccn = payload.get("ccn")
         survey_date = payload.get("survey_date")
         year = payload.get("report_year") or doc.report_year

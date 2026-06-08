@@ -2,11 +2,10 @@
 # Copy to registry/sources_mmrc.yaml and run with --extractor llm.
 # These are the sources used to produce the v0.3.0 real mmrc release.
 sources:
-  - state: MS
-    committee: Mississippi State Department of Health Maternal Mortality Review Committee
-    reports:
-      - {year: 2025, title: "Mississippi Maternal Mortality Report (Review of 2019-2023)", url: "https://msdh.ms.gov/msdhsite/index.cfm/29,21452,299,pdf/Maternal_Mortality_Report_2025.pdf"}
-  - state: US
-    committee: Building U.S. Capacity to Review and Prevent Maternal Deaths (CDC Foundation)
-    reports:
-      - {year: 2018, title: "Report from Nine Maternal Mortality Review Committees", url: "https://www.cdcfoundation.org/sites/default/files/files/ReportfromNineMMRCs.pdf"}
+  - {state: MS, committee: Mississippi MMRC, reports: [{year: 2025, url: "https://msdh.ms.gov/msdhsite/index.cfm/29,21452,299,pdf/Maternal_Mortality_Report_2025.pdf"}]}
+  - {state: TX, committee: Texas MMMRC, reports: [{year: 2024, url: "https://www.dshs.texas.gov/sites/default/files/legislative/2024-Reports/MMMRC-DSHS-Joint-Biennial-Report-2024.pdf"}]}
+  - {state: AR, committee: Arkansas MMRC, reports: [{year: 2022, url: "https://healthy.arkansas.gov/wp-content/uploads/Final_2022_MMRC_Legislative_Report.pdf"}]}
+  - {state: PA, committee: Pennsylvania MMRC, reports: [{year: 2025, url: "https://www.pa.gov/content/dam/copapwp-pagov/en/health/documents/topics/documents/programs/2025%20MMR%20Report.pdf"}]}
+  - {state: CA, committee: California PAMR, reports: [{year: 2018, url: "https://www.cdph.ca.gov/Programs/CFH/DMCAH/CDPH%20Document%20Library/PAMR/CA-PAMR-Report-1.pdf"}]}
+  - {state: MO, committee: Missouri PAMR, reports: [{year: 2025, url: "https://health.mo.gov/data/pamr/pdf/2025annual-report.pdf"}]}
+  - {state: US, committee: CDC Foundation MMRCs (multi-state aggregate), reports: [{year: 2018, url: "https://www.cdcfoundation.org/sites/default/files/files/ReportfromNineMMRCs.pdf"}, {year: 2018, url: "https://www.cdcfoundation.org/sites/default/files/upload/pdf/MMRIAReport.pdf"}]}

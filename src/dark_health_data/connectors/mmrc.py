@@ -163,7 +163,7 @@ class MMRCConnector(Connector):
     def records_from_payload(
         self, payload: dict[str, Any], doc: SourceDocument, provenance_base: dict[str, Any]
     ) -> list[ExtractionRecord]:
-        state = payload.get("state") or doc.jurisdiction or "Unknown"
+        state = doc.jurisdiction or payload.get("state") or "Unknown"
         period = payload.get("report_period")
         year = _to_int(payload.get("report_year")) or doc.report_year
         records: list[ExtractionRecord] = []

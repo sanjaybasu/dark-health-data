@@ -151,7 +151,7 @@ class CHNAConnector(Connector):
         self, payload: dict[str, Any], doc: SourceDocument, provenance_base: dict[str, Any]
     ) -> list[ExtractionRecord]:
         hospital = payload.get("hospital_name") or doc.publisher or "Unknown"
-        state = payload.get("state") or doc.jurisdiction
+        state = doc.jurisdiction or payload.get("state")
         year = _to_int(payload.get("report_year")) or doc.report_year
         ein = payload.get("hospital_ein")
         records: list[ExtractionRecord] = []
