@@ -7,3 +7,27 @@ sources:
   - {hospital: Henry Ford Health, state: MI, reports: [{year: 2023, url: "https://www.henryford.com/-/media/files/henry-ford/about/hfh-implementation-plans.pdf"}]}
   - {hospital: UAB Medicine (Callahan), state: AL, reports: [{year: 2022, url: "https://www.uabmedicine.org/wp-content/uploads/sites/3/2023/02/Callahan-CHNA-2022.pdf"}]}
   - {hospital: UCHealth University of Colorado, state: CO, reports: [{year: 2022, url: "https://www.uchealth.com/wp-content/uploads/2022/11/UCMC-Community-Health-Needs-Assessment-2023-25.pdf"}]}
+  # --- National expansion wave (curl-verified direct PDFs; produced the v0.3.0 release) ---
+  - {hospital: Cleveland Clinic Main Campus, state: OH, reports: [{year: 2025, url: "https://my.clevelandclinic.org/-/scassets/files/org/about/community-reports/chna/2025/main-campus-2025-chna.pdf?la=en"}]}
+  - {hospital: Mayo Clinic Rochester, state: MN, reports: [{year: 2025, url: "https://static1.squarespace.com/static/644aa122716271579b019f2c/t/690cc8217202f570e5bc6a43/1762445345895/Rochester+CHNA+Report+2025.pdf"}]}
+  - {hospital: Mass General Brigham, state: MA, reports: [{year: 2025, url: "https://www.massgeneralbrigham.org/content/dam/mgb-global/en/about/advancing-care/health-equity-community-health/documents/community-health-needs-assessment-2025-mgb.pdf"}]}
+  - {hospital: Cedars-Sinai Medical Center, state: CA, reports: [{year: 2025, url: "https://www.cedars-sinai.org/content/dam/cedars-sinai/community-benefits/documents/community-health-needs-assessment-2025.pdf"}]}
+  - {hospital: NYU Langone Health, state: NY, reports: [{year: 2025, url: "https://nyulangone.org/files/nyulh-chnaa-csp-2025-2027.pdf"}]}
+  - {hospital: Duke University Hospital, state: NC, reports: [{year: 2025, url: "https://corporate.dukehealth.org/sites/default/files/2025-10/DUHFY25CHNAandStrategicImplementationPlan.pdf"}]}
+  - {hospital: UPMC, state: PA, reports: [{year: 2025, url: "https://dam.upmc.com/-/media/upmc/about/community-commitment/documents/2025-chna/2025-chna-report-upmc-southwest-pa.pdf?rev=fb40e4fdce5548e594ab71357216ee6a&hash=F66F637B8D4C0DF3025C4908A4743233"}]}
+  - {hospital: Geisinger Medical Center, state: PA, reports: [{year: 2024, url: "https://www.geisinger.org/-/media/onegeisinger/pdfs/ghs/about-geisinger/chna/2024/gmc-gsach-2024-chna---central-region-final-report.pdf"}]}
+  - {hospital: Banner - University Medical Center Phoenix, state: AZ, reports: [{year: 2025, url: "https://www.bannerhealth.com/-/media/files/project/bh/chna-reports/2025/arizona/banner--university-medical-center-phoenix-phoenix.pdf"}]}
+  - {hospital: Houston Methodist Hospital, state: TX, reports: [{year: 2025, url: "https://www.houstonmethodist.org/-/media/pdf/community-benefits/2025-chna/2025-chna-hmh-final-draft.pdf"}]}
+  - {hospital: Vanderbilt University Medical Center, state: TN, reports: [{year: 2025, url: "https://www.vumc.org/communityhealthimprovement/sites/default/files/2025-Community-Health-Needs-Assessment.pdf"}]}
+  - {hospital: Emory University Hospital, state: GA, reports: [{year: 2025, url: "https://www.emoryhealthcare.org/-/media/Project/EH/Emory/ui/pdfs/community/2025-emory-community-health-needs-assessment.pdf"}]}
+  - {hospital: Rush University Medical Center, state: IL, reports: [{year: 2025, url: "https://www.rush.edu/sites/default/files/media-documents/chna-chip-0725.pdf"}]}
+  - {hospital: Northwestern Memorial Hospital, state: IL, reports: [{year: 2025, url: "https://www.nm.org/-/media/northwestern/resources/about-us/community-health-needs-assessments/nmh-chna-updated-files/northwestern-memorial-hospital-chna-report-2025.pdf"}]}
+  - {hospital: Barnes-Jewish Hospital, state: MO, reports: [{year: 2026, url: "https://www.bjc.org/sites/bjc/files/2026-04/3473900-BJH-02.05.26-final-WEB.pdf"}]}
+  - {hospital: Froedtert Hospital, state: WI, reports: [{year: 2026, url: "https://www.froedtert.com/sites/default/files/upload/docs/giving/community-benefit/fmlh-chna-report-2026-2028.pdf"}]}
+  - {hospital: Boston Medical Center, state: MA, reports: [{year: 2025, url: "https://www.bmc.org/sites/default/files/About_Us/Commitment_to_Our_Community/field_Attachments/2025-BMC-Community-Health-Needs-Assessment-CHNA-Final-Report.pdf"}]}
+  - {hospital: Grady Memorial Hospital, state: GA, reports: [{year: 2025, url: "https://www.gradyhealth.org/wp-content/uploads/Grady-Community-Health-Needs-Assessment-2025.pdf"}]}
+  - {hospital: Parkland Health, state: TX, reports: [{year: 2025, url: "https://www.parklandhealth.org/Uploads/Public/CHNA/BOOK%20CHNA%202025%20032326RH%208.5x11%20WEB.pdf"}]}
+  - {hospital: Denver Health, state: CO, reports: [{year: 2023, url: "https://www.denverhealth.org/-/media/files/about/2023-dhha-community-health-needs-assessment-final.pdf"}]}
+  - {hospital: UCLA Ronald Reagan Medical Center, state: CA, reports: [{year: 2022, url: "https://www.uclahealth.org/sites/default/files/documents/Ronald-Reagan-med-center-2022-CHNA.pdf"}]}
+  - {hospital: Trinity Health Michigan (Chelsea), state: MI, reports: [{year: 2024, url: "https://www.trinityhealthmichigan.org/sites/default/files/2024-06/CHNA-AA-Chelsea-2024.pdf"}]}
+  # Behind Akamai bot-blocking this round (browser fetch only): Mount Sinai (NY), Michigan Medicine (MI)

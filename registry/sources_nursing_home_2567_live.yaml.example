@@ -11,3 +11,13 @@ sources:
       - {year: 2021, url: "https://info.ncdhhs.gov/dhsr/facilities/nh/2021/20210830-923206.pdf"}
       - {year: 2019, url: "https://info.ncdhhs.gov/dhsr/facilities/nh/2019/20190220-923077.pdf"}
       # 20260108-923541.pdf is image-only (no text layer) -> needs `dhd run --ocr`
+  # CA: CDPH Cal Health Find serves 2567s via a deep-linkable REST endpoint. The host
+  # omits the TLS intermediate cert, so these download only via the fetch SSL fallback.
+  - state: CA
+    reports:
+      - {year: 2024, facility: "Hanford Nursing & Rehabilitation Center", url: "https://www.cdph.ca.gov/Programs/CHCQ/LCP/CalHealthFind/_vti_bin/HFCISService.svc/DownloadDocumentByEventID?param=2E8D11~040001364"}
+      - {year: 2024, facility: "San Jose skilled nursing facility", url: "https://www.cdph.ca.gov/Programs/CHCQ/LCP/CalHealthFind/_vti_bin/HFCISService.svc/DownloadDocumentByEventID?param=DM8E11~070000097"}
+      - {year: 2016, facility: "Palomar Heights Post Acute Rehab, Escondido", url: "https://www.cdph.ca.gov/Programs/CHCQ/LCP/CalHealthFind/_vti_bin/HFCISService.svc/DownloadDocumentByEventID?param=OW7L21~080000066"}
+      - {year: 2024, facility: "Bella Vista skilled nursing, San Luis Obispo", url: "https://www.cdph.ca.gov/Programs/CHCQ/LCP/CalHealthFind/_vti_bin/HFCISService.svc/DownloadDocumentByEventID?param=TI1Z11~050000044"}
+  # FL: AHCA dm_web serves flat 2567 PDFs (apps.ahca.myflorida.com/dm_web/DMWeb_Docs/<id>.pdf)
+  # but the ones sampled are scanned image-only -> 0 text; revisit with `--ocr`.
