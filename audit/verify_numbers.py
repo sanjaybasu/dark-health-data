@@ -35,24 +35,24 @@ def check(desc, claimed, derived, exact=True):
 
 # --- headline aggregates ---
 all_states = {r["state"] for r in records if r.get("state")}
-check("distinct states", 25, len(all_states))
-check("reports (documents.csv rows)", 28, len(docs))
-check("total records", 2763, len(records))
-check("quality measures", 1238, len(measures))
-check("PIPs", 447, len(pips))
-check("compliance findings", 1078, len(comp))
-check("distinct measure names", 634, len({m["measure_name"] for m in measures}))
-check("state x plan groupings (measures)", 142,
+check("distinct states", 32, len(all_states))
+check("reports (documents.csv rows)", 37, len(docs))
+check("total records", 10488, len(records))
+check("quality measures", 5043, len(measures))
+check("PIPs", 1194, len(pips))
+check("compliance findings", 4251, len(comp))
+check("distinct measure names", 1849, len({m["measure_name"] for m in measures}))
+check("state x plan groupings (measures)", 252,
       len({(m["state"], m["plan_name"]) for m in measures}))
 
 # states with >=1 measure row
 states_with_measures = {m["state"] for m in measures}
-check("states with measure rows", 17, len(states_with_measures))
+check("states with measure rows", 24, len(states_with_measures))
 
 # mean trust over measure rows (Table 1 total) and over all records (abstract)
 mt_meas = [fnum(m, "trust_score") for m in measures if fnum(m, "trust_score") is not None]
 mean_meas = round(sum(mt_meas) / len(mt_meas), 2)
-check("mean trust (measure rows) ~0.99", 0.99, mean_meas, exact=False)
+check("mean trust (measure rows) ~0.98", 0.98, mean_meas, exact=False)
 mt_all = [fnum(r2, "trust_score") for r2 in
           [dict(trust_score=rr.get("trust_score")) for rr in records]
           if fnum(r2, "trust_score") is not None]
@@ -72,15 +72,17 @@ print(f"[info] review_recommended n={n_review}; over measures={pct_review_meas}%
 # --- Table 1 per-state cells ---
 # claimed: (reports, plans, measures, pips, compliance) ; mean trust checked separately
 T1 = {
- "AZ": (1,10,193,10,53), "CO": (1,11,127,4,94), "FL": (1,0,0,53,0),
- "GA": (2,2,13,1,64), "IA": (2,13,147,29,20), "IL": (1,0,0,25,58),
+ "AZ": (1,10,193,10,53), "CO": (1,11,127,4,94), "DC": (1,14,275,77,250),
+ "DE": (1,3,227,44,380), "FL": (1,0,0,53,0), "GA": (2,2,13,1,64),
+ "HI": (1,10,1235,145,563), "IA": (2,13,147,29,20), "IL": (1,0,0,25,58),
  "IN": (1,11,54,0,0), "KY": (1,1,5,0,72), "LA": (1,0,0,13,18),
- "MD": (1,1,10,37,39), "MI": (1,8,130,1,11), "MS": (1,0,0,20,8),
- "NC": (2,5,20,56,101), "NE": (1,2,18,16,0), "NY": (1,23,95,30,14),
- "OH": (1,0,0,12,70), "OK": (1,0,0,0,48), "OR": (1,1,6,33,70),
- "PA": (1,0,0,14,0), "SC": (1,0,0,10,54), "TN": (1,4,73,1,59),
- "TX": (1,25,119,49,0), "VA": (1,19,170,23,15), "WA": (1,3,28,2,109),
- "WI": (1,3,30,8,101),
+ "MD": (1,1,10,37,39), "MI": (1,8,130,1,11), "MO": (2,32,514,56,734),
+ "MS": (1,0,0,20,8), "NC": (2,5,20,56,101), "NE": (1,2,18,16,0),
+ "NH": (1,7,506,23,335), "NY": (1,23,95,30,14), "OH": (1,0,0,12,70),
+ "OK": (1,0,0,0,48), "OR": (1,1,6,33,70), "PA": (1,0,0,14,0),
+ "RI": (2,7,715,142,133), "SC": (1,0,0,10,54), "TN": (1,4,73,1,59),
+ "TX": (1,25,119,49,0), "UT": (1,37,333,260,778), "VA": (1,19,170,23,15),
+ "WA": (1,3,28,2,109), "WI": (1,3,30,8,101),
 }
 docs_by_state = Counter(d["jurisdiction"] for d in docs)
 meas_by_state = Counter(m["state"] for m in measures)
