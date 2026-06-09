@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dark-health-data"
-version = "0.3.0"
-description = "Turn buried public-health documents (PDFs) into open, research-ready datasets via AI extraction, with a neurosymbolic + conformal verification layer. Connectors: Medicaid EQR, hospital CHNAs, MMRC reports."
+version = "0.4.0"
+description = "Turn buried public-health documents (PDFs) into open, research-ready datasets via AI extraction, with a neurosymbolic + conformal verification layer. Connectors: Medicaid EQR, hospital CHNAs, MMRC reports, Section 1115 evaluations, nursing-home CMS-2567."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "Apache-2.0" }

@@ -1,15 +1,24 @@
 {
-  "title": "Dark Health Data: AI-extracted open datasets from buried public-health documents",
-  "description": "An open-source pipeline that turns buried public-health and healthcare documents (PDFs) into open, research-ready datasets via AI extraction, with a verification layer (grounding, symbolic + LNN-inspired neurosymbolic constraints, heterogeneous ensemble, and a conformal selective-acceptance gate). Connectors: Medicaid External Quality Review (EQR) technical reports, hospital Community Health Needs Assessments (CHNA), and Maternal Mortality Review Committee (MMRC) reports.",
+  "title": "Dark Health Data: an open pipeline turning buried public-health documents into research-ready datasets",
+  "description": "<p>An open-source pipeline that converts buried public-record health and healthcare documents (PDFs) into open, research-ready datasets via large language model extraction with a verification layer: source grounding, symbolic and Logical Neural Network-inspired neurosymbolic constraint checks, a heterogeneous model ensemble, and a conformal selective-acceptance gate. Every record carries full provenance and a quality/trust score; problems are flagged, never imputed or dropped.</p><p>Connectors: Medicaid External Quality Review (EQR) technical reports, hospital Community Health Needs Assessments (CHNA), Maternal Mortality Review Committee (MMRC) reports, Medicaid Section 1115 demonstration evaluations, and nursing-home CMS-2567 statements of deficiency. This release adds a regression-safe incremental merge workflow (expansion only ever adds coverage), a Message Batches extraction path, and a TLS-fallback fetch for public servers with incomplete certificate chains. The extracted datasets are released separately under CC0 (see Related identifiers).</p>",
   "upload_type": "software",
   "access_right": "open",
   "license": "Apache-2.0",
+  "version": "0.4.0",
   "creators": [
-    { "name": "Basu, Sanjay", "affiliation": "Waymark" }
+    { "name": "Basu, Sanjay", "affiliation": "University of California, San Francisco; Waymark" }
   ],
   "keywords": [
     "public health", "Medicaid", "dark data", "external quality review",
-    "community health needs assessment", "maternal mortality", "health equity",
-    "open data", "document extraction", "neurosymbolic", "conformal prediction"
+    "community health needs assessment", "maternal mortality", "Section 1115",
+    "nursing home", "CMS-2567", "health equity", "open data", "document extraction",
+    "neurosymbolic", "conformal prediction", "large language models"
+  ],
+  "related_identifiers": [
+    { "relation": "references", "identifier": "10.5281/zenodo.20616849", "scheme": "doi" },
+    { "relation": "references", "identifier": "10.5281/zenodo.20616851", "scheme": "doi" },
+    { "relation": "references", "identifier": "10.5281/zenodo.20616853", "scheme": "doi" },
+    { "relation": "references", "identifier": "10.5281/zenodo.20616855", "scheme": "doi" },
+    { "relation": "references", "identifier": "10.5281/zenodo.20616857", "scheme": "doi" }
   ]
 }

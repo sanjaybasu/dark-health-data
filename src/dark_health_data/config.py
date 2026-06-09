@@ -13,7 +13,7 @@ from pathlib import Path
 # repo root = three parents up from this file (src/dark_health_data/config.py)
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 
 
 @dataclass

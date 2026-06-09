@@ -21,6 +21,6 @@ keywords:
   - open data
   - document extraction
 license: Apache-2.0
-version: 0.3.0
-date-released: "2026-05-30"
+version: 0.4.0
+date-released: "2026-06-09"
 url: "https://github.com/sanjaybasu/dark-health-data"
