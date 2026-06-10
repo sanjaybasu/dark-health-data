@@ -32,6 +32,43 @@ _USER_AGENTS = [
 ]
 
 
+def _insecure_legacy_get(url: str, timeout: int) -> bytes:
+    """Last-resort fetch for stubborn public-record servers: handles BOTH an
+    incomplete TLS chain (missing intermediate cert) AND servers that require
+    legacy SSL renegotiation (OpenSSL 3 rejects both by default). We content-hash
+    every byte (the sha256 is the document_id, so substitution is tamper-evident
+    and auditable), so one unverified retry on an immutable public PDF is acceptable.
+    """
+    import ssl
+
+    import requests
+    import urllib3
+    from requests.adapters import HTTPAdapter
+    from urllib3.util.ssl_ import create_urllib3_context
+
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+    ctx = create_urllib3_context()
+    ctx.options |= getattr(ssl, "OP_LEGACY_SERVER_CONNECT", 0x4)
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+
+    class _LegacyAdapter(HTTPAdapter):
+        def init_poolmanager(self, *args, **kwargs):
+            kwargs["ssl_context"] = ctx
+            return super().init_poolmanager(*args, **kwargs)
+
+    session = requests.Session()
+    session.mount("https://", _LegacyAdapter())
+    resp = session.get(
+        url,
+        headers={"User-Agent": _USER_AGENTS[0], "Accept": "application/pdf,*/*;q=0.8"},
+        timeout=timeout,
+        verify=False,
+    )
+    resp.raise_for_status()
+    return resp.content
+
+
 def _download(url: str, timeout: int = 90) -> bytes:
     import requests  # available in base env
 
@@ -48,26 +85,13 @@ def _download(url: str, timeout: int = 90) -> bytes:
         except Exception as exc:  # try the next user-agent
             last_exc = exc
 
-    # Last resort for public records behind an INCOMPLETE TLS chain: several state
-    # agencies (e.g. NH Medicaid, CA CDPH) omit the intermediate certificate, so
-    # certifi rejects them though a browser/OS trust store accepts them. These are
-    # immutable public PDFs and we content-hash every byte (the sha256 is the
-    # document_id, so substitution is tamper-evident and auditable), so one
-    # unverified retry is acceptable -- logged loudly rather than silent.
+    # Last resort for public records behind an incomplete TLS chain (e.g. NH Medicaid,
+    # CA CDPH omit the intermediate cert) or servers requiring legacy renegotiation
+    # (e.g. some hospital CHNA hosts). Logged loudly rather than silent.
     if isinstance(last_exc, requests.exceptions.SSLError):
-        import urllib3
-
-        log.warning("TLS verification failed for %s; retrying once WITHOUT verification "
+        log.warning("TLS handshake failed for %s; retrying once WITHOUT verification "
                     "(public record, content-hashed): %s", url, last_exc)
-        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-        resp = requests.get(
-            url,
-            headers={"User-Agent": _USER_AGENTS[0], "Accept": "application/pdf,*/*;q=0.8"},
-            timeout=timeout,
-            verify=False,
-        )
-        resp.raise_for_status()
-        return resp.content
+        return _insecure_legacy_get(url, timeout)
     raise last_exc  # type: ignore[misc]
 
 

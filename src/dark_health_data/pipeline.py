@@ -282,6 +282,14 @@ def run_dataset_batch(
             text = pdf.extract_text(doc.local_path, ocr=ocr)
             doc.n_pages = text.count("[[PAGE ")
             doc.content_sha256 = sha256_text(text)
+            if doc.document_id in docs_by_id:
+                # Distinct source URLs can resolve to the SAME PDF (e.g. one health
+                # system's CHNA listed under several member hospitals). They share a
+                # content-hash document_id, so chunking both yields duplicate batch
+                # custom_ids (a hard 400). Extract each unique document once.
+                log(f"[dedup]    {cand.jurisdiction or cand.location}: same content as an "
+                    f"already-fetched document -- skipping duplicate URL")
+                continue
             items.append((doc, text))
             docs.append(doc)
             docs_by_id[doc.document_id] = doc

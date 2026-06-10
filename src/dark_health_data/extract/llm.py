@@ -236,7 +236,14 @@ class BatchLLMExtractor(LLMExtractor):
         system, tools = self._prefix(connector)
         requests: list[dict] = []
         id_map: dict[str, tuple[str, int]] = {}
+        seen_docs: set[str] = set()
         for doc, text in items:
+            # custom_ids are derived from document_id; the same document (two source
+            # URLs resolving to identical content) would emit duplicate custom_ids
+            # (a hard 400). Guarantee uniqueness by chunking each document once.
+            if doc.document_id in seen_docs:
+                continue
+            seen_docs.add(doc.document_id)
             chunks = _chunk(text)
             if self.max_chunks:
                 chunks = chunks[: self.max_chunks]
