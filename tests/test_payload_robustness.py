@@ -56,8 +56,11 @@ def test_nursing_2567_payload_robustness():
     payload = {
         "report_year": "<UNKNOWN>",
         "deficiencies": ["junk", {"ftag": "F684", "deficiency_description": "Quality of care"}],
-        "plans_of_correction": ["junk", {"correction": "Retrain staff"}],
+        # an explicit null `correction` (key present, value None) must not crash .strip()
+        "plans_of_correction": ["junk", {"correction": "Retrain staff"}, {"ftag": "F880", "correction": None}],
     }
     recs = NursingHome2567Connector().records_from_payload(payload, doc, dict(_PROV))
-    assert len(recs) == 2
+    assert len(recs) == 3  # 1 deficiency + 2 plans (stray strings skipped)
     assert all(r.report_year == 2024 for r in recs)
+    pocs = [r for r in recs if getattr(r, "correction", None) is not None]
+    assert any(r.correction == "" for r in pocs)  # null coerced to empty, not a crash

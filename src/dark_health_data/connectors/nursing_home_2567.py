@@ -182,7 +182,7 @@ class NursingHome2567Connector(Connector):
             records.append(
                 NursingHomePlanOfCorrection(
                     provenance=prov(p), facility_name=facility, state=state, report_year=year,
-                    ftag=p.get("ftag"), correction=p.get("correction", "").strip(),
+                    ftag=p.get("ftag"), correction=(p.get("correction") or "").strip(),
                     completion_date=p.get("completion_date"),
                 )
             )
