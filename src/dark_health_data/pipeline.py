@@ -130,6 +130,25 @@ def _merge_records_docs(existing_records, existing_docs, new_records, new_docs):
     return kept_records + new_records, kept_docs + new_docs
 
 
+def _load_modal_text(dataset_id: str) -> dict[str, dict]:
+    """Optional Modal fetch+OCR cache (scripts/modal_fetch_ocr.py): source URL ->
+    {document_id, text, n_pages}. When present, run_dataset_batch uses it instead of
+    fetching+OCRing locally (avoids local network saturation + slow local OCR for
+    scanned PDFs). Absent file -> empty dict -> unchanged pure-local behavior."""
+    import json
+
+    p = settings.cache_dir / "modal_text" / f"{dataset_id}.jsonl"
+    if not p.exists():
+        return {}
+    out: dict[str, dict] = {}
+    for line in p.read_text(encoding="utf-8").splitlines():
+        if line.strip():
+            r = json.loads(line)
+            if r.get("ok") and r.get("url") and r.get("text"):
+                out[r["url"]] = r
+    return out
+
+
 def _aggregate_report(records) -> dict[str, Any]:
     """Recompute the summary over a (possibly merged) record set without re-verifying:
     canonical records keep their stored trust/QA, new records were just verified."""
@@ -276,10 +295,25 @@ def run_dataset_batch(
     docs: list[SourceDocument] = []
     docs_by_id: dict[str, SourceDocument] = {}
     doc_texts: dict[str, str] = {}
+    modal_text = _load_modal_text(dataset_id)
+    if modal_text:
+        log(f"[modal]    using off-box fetch+OCR cache for {len(modal_text)} URL(s)")
     for cand in candidates:
         try:
-            doc = fetch(cand)
-            text = pdf.extract_text(doc.local_path, ocr=ocr)
+            m = modal_text.get(cand.url) if cand.url else None
+            if m:
+                from datetime import datetime, timezone
+                doc = SourceDocument(
+                    document_id=m["document_id"], source_url=cand.url, local_path=None,
+                    title=cand.title, publisher=cand.publisher, dataset_id=dataset_id,
+                    jurisdiction=cand.jurisdiction, program=cand.program,
+                    report_year=cand.report_year, retrieved_at=datetime.now(timezone.utc),
+                    mime_type="application/pdf",
+                )
+                text = m["text"]
+            else:
+                doc = fetch(cand)
+                text = pdf.extract_text(doc.local_path, ocr=ocr)
             doc.n_pages = text.count("[[PAGE ")
             doc.content_sha256 = sha256_text(text)
             if doc.document_id in docs_by_id:
