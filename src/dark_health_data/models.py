@@ -38,6 +38,7 @@ class ExtractionMethod(str, Enum):
     """How a value was obtained from the source document."""
 
     LLM = "llm"  # large language model structured extraction
+    VISION = "vision"  # vision-language read of a rendered page image (charts/figures)
     RULE = "rule"  # deterministic parser (regex/table heuristics)
     MANUAL = "manual"  # human keyed/corrected
     DERIVED = "derived"  # computed from other extracted fields

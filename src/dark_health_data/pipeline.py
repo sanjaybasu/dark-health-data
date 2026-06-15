@@ -514,9 +514,10 @@ def main(argv: list[str] | None = None) -> int:
 
     p_run = sub.add_parser("run", help="run the pipeline for a dataset")
     p_run.add_argument("--dataset", required=True, help="dataset id, e.g. 'eqr'")
-    p_run.add_argument("--extractor", default="rule", choices=["rule", "llm", "vlm"])
-    p_run.add_argument("--second-extractor", default=None, choices=["rule", "llm", "vlm"],
-                       help="decorrelated 2nd extractor for the ensemble verifier (e.g. 'vlm' for local Qwen)")
+    p_run.add_argument("--extractor", default="rule", choices=["rule", "llm", "vision", "vlm"])
+    p_run.add_argument("--second-extractor", default=None, choices=["rule", "llm", "vision", "vlm"],
+                       help="decorrelated 2nd extractor for the ensemble verifier "
+                            "('vision' = Claude read of figure pages; 'vlm' = local Qwen)")
     p_run.add_argument("--limit", type=int, default=None, help="max documents to process")
     p_run.add_argument("--ocr", action="store_true", help="OCR pages with no text layer")
     p_run.add_argument("--no-parquet", action="store_true", help="skip parquet output")
