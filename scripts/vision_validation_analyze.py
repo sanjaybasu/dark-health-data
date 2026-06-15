@@ -38,8 +38,12 @@ def load(path: str) -> dict[str, int]:
     out = {}
     for r in rows[1:]:
         u, v = r[H["row_uid"]], r[H["correct"]]
-        if u is not None and v in (0, 1):
-            out[str(u)] = int(v)
+        try:  # cells may be typed as int, float, or text ("1"/"0") depending on the editor
+            iv = int(str(v).strip())
+        except (TypeError, ValueError):
+            continue
+        if u is not None and iv in (0, 1):
+            out[str(u)] = iv
     return out
 
 
