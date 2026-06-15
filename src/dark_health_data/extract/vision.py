@@ -178,10 +178,15 @@ class ClaudeVisionExtractor(Extractor):
                 return payload
         return payload  # may be empty/None: a genuinely value-free figure page
 
+    #: retry attempts per page. Vision (image) requests are token-heavy and hit ITPM
+    #: limits under any concurrency; a corpus pass must not silently drop a figure page,
+    #: so back off patiently rather than give up.
+    MAX_ATTEMPTS = 9
+
     def _call_with_retry(self, client, model, img, instructions, tool, page_no) -> dict | None:
         import anthropic
 
-        for attempt in range(5):
+        for attempt in range(self.MAX_ATTEMPTS):
             try:
                 resp = client.messages.create(
                     model=model,
@@ -200,7 +205,7 @@ class ClaudeVisionExtractor(Extractor):
                         return block.input
                 return None
             except anthropic.RateLimitError as exc:
-                wait = getattr(exc, "retry_after", None) or min(2 ** attempt, 30)
+                wait = getattr(exc, "retry_after", None) or min(2 ** attempt, 60)
                 log.warning("vision rate-limited (attempt %d), sleeping %ss", attempt + 1, wait)
                 time.sleep(float(wait))
             except anthropic.APIStatusError as exc:
