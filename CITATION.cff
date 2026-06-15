@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this dataset or pipeline, please cite it."
-title: "Dark Health Data: AI-extracted open datasets from buried public-health documents"
+title: "Hidden Health Data: AI-extracted open datasets from buried public-health documents"
 abstract: >-
   An open-source pipeline that uses LLM-based structured extraction to convert
   buried public-health and healthcare documents (PDFs) into tidy, provenance-
@@ -11,7 +11,7 @@ authors:
   - family-names: Basu
     given-names: Sanjay
     affiliation: Waymark
-  - name: "Dark Health Data contributors"
+  - name: "Hidden Health Data contributors"
 keywords:
   - public health
   - Medicaid

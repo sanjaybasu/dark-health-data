@@ -1,4 +1,4 @@
-# Dark Health Data
+# Hidden Health Data
 
 **Turning buried public-health documents into open, research-ready datasets.**
 
@@ -11,7 +11,7 @@ groups we most need to study are the ones whose data is least organized
 ([Dark Data in Public Health, *J Public Health Policy* 2025](https://link.springer.com/article/10.1057/s41271-025-00589-3);
 [structural missingness, *PMC* 2021](https://pmc.ncbi.nlm.nih.gov/articles/PMC8607058/)).
 
-Dark Health Data is an automated pipeline that **discovers, extracts, validates,
+Hidden Health Data is an automated pipeline that **discovers, extracts, validates,
 and publishes** these datasets — using LLM-based structured extraction ("AI
 scanning") with a strict provenance-and-QA contract so the output is credible for
 peer-reviewed research.
@@ -31,7 +31,7 @@ The major modern Medicaid data efforts are built on **structured claims** — th
 T-MSIS Analytic Files (TAF) — to produce *spending and utilization* measures. That
 includes Cornell's **Medicaid Policy Impact Initiative / Medicaid Atlas**
 ([Weill Cornell + BU, 2026](https://news.weill.cornell.edu/news/2026/04/grant-supports-efforts-to-create-atlas-of-medicaid-spending))
-and the AcademyHealth **Medicaid Data Learning Network**. Dark Health Data is the
+and the AcademyHealth **Medicaid Data Learning Network**. Hidden Health Data is the
 **complement, not a competitor**: we extract *quality, compliance, oversight, and
 community-needs* information from **narrative regulatory documents** that claims
 data structurally does not contain (managed-care plan payments are even redacted

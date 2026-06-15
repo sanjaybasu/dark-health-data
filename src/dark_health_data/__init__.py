@@ -1,4 +1,4 @@
-"""Dark Health Data — turning buried public-health documents into open, research-ready datasets."""
+"""Hidden Health Data — turning buried public-health documents into open, research-ready datasets."""
 
 from __future__ import annotations
 

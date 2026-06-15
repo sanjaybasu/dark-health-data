@@ -36,7 +36,7 @@ git commit -m "initial public release" && gh repo create ... --source=. --push`.
 
 ## 4. Tag a release (so Zenodo can archive it)
 ```bash
-git tag -a v0.3.0 -m "Dark Health Data v0.3.0" && git push origin v0.3.0
+git tag -a v0.3.0 -m "Hidden Health Data v0.3.0" && git push origin v0.3.0
 gh release create v0.3.0 --title "v0.3.0" --notes "Pipeline + EQR/CHNA/MMRC connectors + verification layer."
 ```
 

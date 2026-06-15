@@ -1,6 +1,6 @@
 # The landscape of missing & buried public-health data
 
-*A short literature review motivating Dark Health Data. Companion to the
+*A short literature review motivating Hidden Health Data. Companion to the
 machine-readable catalog in [`registry/datasets.yaml`](../registry/datasets.yaml).*
 
 ## 1. Two kinds of "missing"
@@ -23,7 +23,7 @@ Public-health data can be missing in two very different ways:
    websites, with no common schema and no index. It is **theoretically available,
    practically inaccessible.**
 
-Dark Health Data targets the **second** kind. It is the more immediately
+Hidden Health Data targets the **second** kind. It is the more immediately
 tractable problem — the documents exist and can be obtained — and modern LLM-based
 extraction makes it newly solvable at scale. (The first kind is a data-*collection*
 problem that no extraction pipeline can fix; we note it but do not claim to solve

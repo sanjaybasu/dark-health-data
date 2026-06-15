@@ -506,7 +506,7 @@ def _cmd_batch(args: argparse.Namespace) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="dhd", description="Dark Health Data pipeline")
+    parser = argparse.ArgumentParser(prog="dhd", description="Hidden Health Data pipeline")
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     p_list = sub.add_parser("list", help="list dataset families in the registry")

@@ -1,4 +1,4 @@
-"""Core data models for Dark Health Data.
+"""Core data models for Hidden Health Data.
 
 Every value we extract from a source document is *evidence*, not ground truth.
 To be usable for science, each record must be traceable back to the exact

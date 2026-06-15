@@ -1,6 +1,6 @@
 # CLAUDE.md — working in this repo
 
-Dark Health Data turns *buried* public-health documents (PDFs) into open,
+Hidden Health Data turns *buried* public-health documents (PDFs) into open,
 research-ready datasets via AI extraction, with a verification layer that makes the
 output trustworthy. Read this before editing; it encodes the conventions.
 

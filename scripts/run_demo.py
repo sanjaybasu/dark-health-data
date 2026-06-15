@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Offline, zero-dependency demo of the Dark Health Data pipeline.
+"""Offline, zero-dependency demo of the Hidden Health Data pipeline.
 
 Runs the full discover -> fetch -> extract -> validate -> curate -> publish flow
 on the synthetic EQR fixtures using the deterministic rule extractor, then prints
@@ -21,7 +21,7 @@ from dark_health_data.pipeline import run_dataset  # noqa: E402
 
 def main() -> int:
     print("=" * 72)
-    print("Dark Health Data — offline demo (Medicaid EQR connector, rule extractor)")
+    print("Hidden Health Data — offline demo (Medicaid EQR connector, rule extractor)")
     print("=" * 72)
     summary = run_dataset("eqr", extractor_name="rule", verbose=True)
 

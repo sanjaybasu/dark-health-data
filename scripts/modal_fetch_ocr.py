@@ -1,4 +1,4 @@
-"""Modal-offloaded fetch + OCR for Dark Health Data (esp. scanned nursing 2567s).
+"""Modal-offloaded fetch + OCR for Hidden Health Data (esp. scanned nursing 2567s).
 
 Each call handles ONE PDF: download (with the same TLS fallback as fetch.py) + page-marked
 text extraction + OCR fallback for scanned pages -- mirroring pdf.extract_text exactly so the

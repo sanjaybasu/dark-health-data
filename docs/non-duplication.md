@@ -1,6 +1,6 @@
 # Non-duplication analysis
 
-A deliberate map of adjacent efforts and why Dark Health Data fills a gap rather
+A deliberate map of adjacent efforts and why Hidden Health Data fills a gap rather
 than repeating them. Short version: **everyone else organizes *structured* data
 (claims, surveys, surveillance) or publishes *curated summaries/links*. No one
 produces an open, row-level, provenance-stamped dataset extracted from the
@@ -38,9 +38,9 @@ plans, and populations. Cornell is also a founding member of the AcademyHealth
 **Medicaid Data Learning Network**, which develops TAF best practices
 ([Weill Cornell](https://phs.weill.cornell.edu/news/weill-cornell-researchers-lead-development-checklist-improve-medicaid-policy-research)).
 
-How Dark Health Data differs — on every axis:
+How Hidden Health Data differs — on every axis:
 
-| Axis | Cornell Medicaid Atlas | Dark Health Data |
+| Axis | Cornell Medicaid Atlas | Hidden Health Data |
 |---|---|---|
 | **Input** | Structured claims (TAF) | Narrative regulatory/assessment **PDFs** |
 | **Method** | SQL/analytics on claims | LLM structured **extraction** of documents |

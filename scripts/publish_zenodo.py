@@ -76,7 +76,7 @@ def main(dataset: str) -> int:
                if dataset == "eqr" else
                "AI-extracted, not yet independently validated — preliminary; filter on the trust score.")
     desc = (
-        f"<p><b>Dark Health Data</b>: {SOURCE[dataset]}, extracted via Claude "
+        f"<p><b>Hidden Health Data</b>: {SOURCE[dataset]}, extracted via Claude "
         f"<code>claude-haiku-4-5</code> with a verification layer (grounding, neurosymbolic "
         f"constraints, ensemble, conformal gate).</p>"
         f"<p><b>This release (v{new_ver})</b> — expanded national crawl: <b>{len(recs):,} records</b> "
