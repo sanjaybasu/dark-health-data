@@ -218,7 +218,13 @@ class EQRConnector(Connector):
                     "type": ["string", "null"],
                     "description": "administrative, hybrid, or survey",
                 },
-                "reporting_year": {"type": ["integer", "null"]},
+                "reporting_year": {
+                    "type": ["integer", "null"],
+                    "description": "the MEASUREMENT year this rate covers, copied from the column/section "
+                                   "header (e.g. 'MY 2023', 'CY2022', 'FFY 2023') -- NOT the report's "
+                                   "title/publication year. For a multi-year/trend table, emit one row "
+                                   "per year, each with its own column-header year.",
+                },
                 "rate": {"type": ["number", "null"], "description": "numeric rate value as printed"},
                 "rate_unit": {"type": ["string", "null"], "description": "percent, per_1000, per_100000, ratio, count"},
                 "numerator": {"type": ["integer", "null"]},
@@ -294,7 +300,14 @@ class EQRConnector(Connector):
             "belongs to a quality_measure instead).\n\n"
             "Plan names must be copied verbatim. Record the 1-indexed PDF page for each "
             "row and a 0-1 confidence reflecting how unambiguous the source text was. "
-            "Rates are usually percentages; preserve the printed unit."
+            "Rates are usually percentages; preserve the printed unit.\n\n"
+            "reporting_year is the MEASUREMENT year the rate covers (the year on the "
+            "table's column or section header, e.g. 'MY 2023', 'CY2022', 'FFY 2023'), NOT "
+            "the report's title or publication year -- a report published in one year "
+            "almost always reports a prior measurement year. Copy that header year verbatim; "
+            "if a table shows several years (a trend), emit one row per year with its own "
+            "year. If no measurement year is shown for a rate, return null for reporting_year "
+            "rather than guessing the report year."
         )
 
     def records_from_payload(
@@ -323,24 +336,41 @@ class EQRConnector(Connector):
                     unit = RateUnit(str(m["rate_unit"]).lower())
                 except ValueError:
                     pass
-            records.append(
-                EQRQualityMeasure(
-                    provenance=prov(m),
-                    state=state or "ZZ",
-                    program=program,
-                    plan_name=m.get("plan_name", "").strip(),
-                    measure_name=m.get("measure_name", "").strip(),
-                    measure_steward=_coerce_steward(m.get("measure_steward")),
-                    measure_code=m.get("measure_code"),
-                    reporting_year=m.get("reporting_year") or doc.report_year or 0,
-                    rate=rate,
-                    rate_unit=unit,
-                    numerator=_to_int(m.get("numerator")),
-                    denominator=_to_int(m.get("denominator")),
-                    population=m.get("population"),
-                    data_collection_method=m.get("data_collection_method"),
-                )
+            # reporting_year is the MEASUREMENT year. If the model could not read one we
+            # still need a value for the analytic grain, but falling back to the report's
+            # publication year is a known mislabel source, so flag it instead of doing it
+            # silently. We also flag years that post-date the report (impossible) or sit
+            # implausibly far before it (likely a parse error). This check lives here, not
+            # in constraints(), because it needs the document's publication year.
+            my = _to_int(m.get("reporting_year"))
+            defaulted = my is None
+            year = my or doc.report_year or 0
+            rec = EQRQualityMeasure(
+                provenance=prov(m),
+                state=state or "ZZ",
+                program=program,
+                plan_name=m.get("plan_name", "").strip(),
+                measure_name=m.get("measure_name", "").strip(),
+                measure_steward=_coerce_steward(m.get("measure_steward")),
+                measure_code=m.get("measure_code"),
+                reporting_year=year,
+                rate=rate,
+                rate_unit=unit,
+                numerator=_to_int(m.get("numerator")),
+                denominator=_to_int(m.get("denominator")),
+                population=m.get("population"),
+                data_collection_method=m.get("data_collection_method"),
             )
+            ry = doc.report_year
+            if defaulted and ry:
+                rec.flag(f"reporting_year defaulted to publication year {ry} (no measurement "
+                         "year read) — verify against source")
+            elif ry and year:
+                if year > ry:
+                    rec.flag(f"reporting_year {year} is after report year {ry} — likely parse error")
+                elif ry - year > 8:
+                    rec.flag(f"reporting_year {year} is implausibly far before report year {ry} — verify")
+            records.append(rec)
 
         for p in payload.get("performance_improvement_projects", []) or []:
             if not isinstance(p, dict):

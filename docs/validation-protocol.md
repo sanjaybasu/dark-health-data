@@ -19,6 +19,10 @@ human-adjudicated truth.
 - A written **codebook** defining "correct": exact value match (state a rounding
   tolerance, e.g. ±0.1), correct entity attribution (right plan/measure/year/population),
   and distinct codes for **wrong value**, **hallucinated** (not in source), and **mis-mapped**.
+  - **Year convention:** `reporting_year` is the **measurement year** the rate covers (the
+    table/column-header year — HEDIS MY, CMS FFY, etc.), **not** the report's publication
+    year. Score a record `0` if it carries the publication year when the source shows an
+    earlier measurement year (e.g. a 2024 report whose table is labelled "MY 2023").
 - **Adjudicate** disagreements (third reviewer or consensus); report **inter-rater
   agreement** — Cohen's κ, and **Gwet's AC1** (more stable than κ under high agreement,
   which is expected here).

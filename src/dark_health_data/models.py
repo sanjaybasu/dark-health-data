@@ -170,7 +170,9 @@ class EQRQualityMeasure(ExtractionRecord):
     measure_name: str = Field(..., description="performance measure name as printed")
     measure_steward: MeasureSteward = MeasureSteward.UNKNOWN
     measure_code: Optional[str] = Field(None, description="abbreviation/code if printed, e.g. 'W30', 'CBP'")
-    reporting_year: int = Field(..., description="measurement year the rate refers to")
+    reporting_year: int = Field(
+        ..., description="measurement year the rate covers (the table/column-header year, "
+        "e.g. HEDIS MY or CMS FFY) — NOT the report's publication year")
     rate: Optional[float] = Field(None, description="reported rate value")
     rate_unit: RateUnit = RateUnit.PERCENT
     numerator: Optional[int] = None

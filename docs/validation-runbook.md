@@ -32,6 +32,11 @@ Open `gold/eqr_sample.csv`. For each row:
 to the wrong plan/measure/year/population; the value isn't actually in the report
 (hallucinated); a count was reported as a percent (or vice-versa).
 
+**Year:** `reporting_year` should be the **measurement year** shown for that rate (the
+column/section header — "MY 2023", "FFY 2023", etc.), not the report's cover/publication
+year. If the row shows the publication year but the table's measurement year is earlier,
+count it `0`.
+
 **Tips:** do a few obvious high-`trust_score` rows and a few low ones first to calibrate
 your eye. Jot any systematic patterns (e.g., "denominators off for state X") in a notes
 column — those are gold for improving extraction. For a kappa/agreement statistic, have a
