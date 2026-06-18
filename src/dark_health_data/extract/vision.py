@@ -218,6 +218,13 @@ class ClaudeVisionExtractor(Extractor):
                     continue
                 log.error("non-retryable vision error on page %d: %s", page_no, exc)
                 return None
+            except anthropic.APIConnectionError as exc:
+                # timeouts + dropped connections (large image uploads are prone to these);
+                # transient, so back off and retry rather than drop the page.
+                wait = min(2 ** attempt, 30)
+                log.warning("vision connection error on page %d (attempt %d), sleeping %ss: %s",
+                            page_no, attempt + 1, wait, exc)
+                time.sleep(wait)
             except Exception as exc:  # pragma: no cover - unexpected
                 log.error("unexpected vision error on page %d: %s", page_no, exc)
                 return None
