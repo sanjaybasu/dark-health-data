@@ -30,6 +30,7 @@ from __future__ import annotations
 import base64
 import logging
 import os
+import re
 import time
 from typing import Any, Optional
 
@@ -39,6 +40,13 @@ from ..models import ExtractionMethod, SourceDocument
 from .base import Extractor
 
 log = logging.getLogger("dark_health_data.extract.vision")
+
+# A figure page is identified by its CAPTION, not by stroke geometry. Ruled tables draw
+# hundreds of vector strokes (cell borders) and would otherwise masquerade as charts; bar
+# charts draw only axis-aligned rectangles and would otherwise look like tables. The caption
+# ("Figure 8.", "Exhibit 3:", "Chart 2") is the reliable, modality-agnostic signal. Anchored
+# to line start so a mid-sentence "...as Figure 8 shows" in narrative does not match.
+_FIG_CAPTION = re.compile(r"(?im)^\s{0,8}(figure|exhibit|chart)\s*\d")
 
 VISION_INSTRUCTION_SUFFIX = (
     "\n\nYou are reading a RENDERED IMAGE of a single report page that contains one or "
@@ -94,29 +102,25 @@ class ClaudeVisionExtractor(Extractor):
     # ----- figure detection -----
     @staticmethod
     def figure_pages(pdf_path: str, *, max_pages: int | None = 12) -> list[int]:
-        """1-indexed pages that look like figures: graphics present, tabular numerics sparse.
+        """1-indexed pages that hold a CHART/FIGURE, identified by caption.
 
-        A page qualifies if it has raster images or a non-trivial number of vector
-        drawings (lines/curves -- the body of a chart) AND its text layer is not already
-        a dense numeric table (which the text extractor handles well). Returns at most
-        ``max_pages`` pages, the most graphics-heavy first, to bound cost.
+        A page qualifies if it (a) carries a ``Figure``/``Exhibit``/``Chart`` caption and
+        (b) actually has graphics (a raster image or vector drawing). Caption-detection is
+        used deliberately instead of stroke counting: ruled tables draw hundreds of border
+        strokes (they would masquerade as charts) and bar charts draw only rectangles (they
+        would masquerade as tables) -- the caption separates the two reliably across chart
+        types. Returns at most ``max_pages`` pages, most graphics-heavy first, to bound cost.
         """
         import fitz  # PyMuPDF
 
-        scored: list[tuple[float, int]] = []
+        scored: list[tuple[int, int]] = []
         with fitz.open(pdf_path) as doc:
             for i, page in enumerate(doc, start=1):
-                text = page.get_text() or ""
-                n_images = len(page.get_images())
+                if not _FIG_CAPTION.search(page.get_text() or ""):
+                    continue
                 n_draw = len(page.get_drawings())
-                digits = sum(c.isdigit() for c in text)
-                # a real rate TABLE is digit-dense; a chart page is graphics-dense with
-                # comparatively little digit text. Require graphics, and skip pages whose
-                # text already reads like a big table.
-                graphics = n_images > 0 or n_draw >= 12
-                table_like = digits > 400
-                if graphics and not table_like:
-                    scored.append((n_draw + 50 * n_images, i))
+                if page.get_images() or n_draw >= 12:  # caption + real graphics
+                    scored.append((n_draw, i))
         scored.sort(reverse=True)
         pages = [i for _, i in scored]
         return pages[:max_pages] if max_pages else pages
