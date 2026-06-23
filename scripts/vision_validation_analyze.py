@@ -38,11 +38,12 @@ def load(path: str) -> dict[str, int]:
     out = {}
     for r in rows[1:]:
         u, v = r[H["row_uid"]], r[H["correct"]]
-        try:  # cells may be typed as int, float, or text ("1"/"0") depending on the editor
+        try:  # cells may be typed as int, float, or text ("1"/"0"/"2") depending on the editor
             iv = int(str(v).strip())
         except (TypeError, ValueError):
             continue
-        if u is not None and iv in (0, 1):
+        # keep 0/1 (figure scored) and 2 (value not from the figure -- excluded from accuracy)
+        if u is not None and iv in (0, 1, 2):
             out[str(u)] = iv
     return out
 
@@ -54,7 +55,11 @@ def main() -> int:
     ap.add_argument("--key", default="private/review-packet/eqr_vision_validation_KEY.csv")
     args = ap.parse_args()
 
-    B = load(args.reviewer_b)
+    Ball = load(args.reviewer_b)
+    n2 = sum(1 for v in Ball.values() if v == 2)
+    if n2:
+        print(f"excluded {n2} rows coded '2' (value not from a figure / mixed page)")
+    B = {u: v for u, v in Ball.items() if v in (0, 1)}  # figure-scored only
     k, n = sum(B.values()), len(B)
     p, lo, hi = wilson(k, n)
     print(f"VISION field accuracy (reviewer B): {k}/{n} = {p:.3f} [{lo:.3f}, {hi:.3f}]")
