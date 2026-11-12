@@ -10,6 +10,7 @@ from .chna import CHNAConnector
 from .eqr import EQRConnector
 from .fair_hearing import FairHearingConnector
 from .mco_contract import MCOContractConnector
+from .medicaid_advisory import MedicaidAdvisoryConnector
 from .mmrc import MMRCConnector
 from .nursing_home_2567 import NursingHome2567Connector
 from .waiver_1115 import Waiver1115Connector
@@ -22,6 +23,7 @@ CONNECTORS: dict[str, Connector] = {
     NursingHome2567Connector.dataset_id: NursingHome2567Connector(),
     FairHearingConnector.dataset_id: FairHearingConnector(),
     MCOContractConnector.dataset_id: MCOContractConnector(),
+    MedicaidAdvisoryConnector.dataset_id: MedicaidAdvisoryConnector(),
 }
 
 

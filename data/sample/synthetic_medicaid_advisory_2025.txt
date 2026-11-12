@@ -1,0 +1,14 @@
+MEDICAID ADVISORY COMMITTEE MINUTES (synthetic example)
+
+This is a SYNTHETIC document created to demonstrate the Hidden Health Data pipeline
+offline. It describes no real state, committee, meeting, or person.
+
+MEETING | Synthetic Medicaid Advisory Committee | medicaid advisory committee | 2025-03-14
+
+[[PAGE 2]]
+Public comment. A parent of a member said renewal notices arrived after the due date and the family lost coverage for two months.
+ITEM | 2 | public comment | eligibility, enrollment, and renewals | member of the public | A parent of a member said renewal notices arrived after the due date, and the family lost coverage for two months. | Agency staff said the agency will review notice mailing dates. | | renewal notices arrived after the due date and the family lost coverage for two months
+
+[[PAGE 3]]
+The Committee moved to recommend that the Department extend the renewal response period to 45 days. The motion passed.
+ITEM | 3 | motion or vote | eligibility, enrollment, and renewals | committee member | The committee recommended that the agency extend the renewal response period to 45 days. | | passed | The Committee moved to recommend that the Department extend the renewal response period to 45 days. The motion passed.

@@ -14,6 +14,7 @@ do not change the provenance/quality contract.
 from __future__ import annotations
 
 import hashlib
+import re
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Optional
@@ -603,6 +604,99 @@ class MCOContractProvision(ExtractionRecord):
         return self
 
 
+# ---------------------------------------------------------------------------
+# Medicaid advisory committee and beneficiary council meeting minutes
+# ---------------------------------------------------------------------------
+
+#: allowed values of AdvisoryMeetingItem.committee_type
+ADVISORY_COMMITTEE_TYPES = (
+    "medicaid advisory committee",
+    "beneficiary advisory council",
+    "joint meeting",
+    "subcommittee or other",
+)
+
+#: allowed values of AdvisoryMeetingItem.item_type
+ADVISORY_ITEM_TYPES = (
+    "member concern or comment",
+    "public comment",
+    "recommendation",
+    "motion or vote",
+    "agency response",
+    "agency update",
+)
+
+#: allowed values of AdvisoryMeetingItem.topic_category
+ADVISORY_TOPICS = (
+    "eligibility, enrollment, and renewals",
+    "managed care plans and plan performance",
+    "access to care and provider networks",
+    "behavioral health and substance use",
+    "long-term services and supports",
+    "pharmacy and prescription drugs",
+    "dental and vision",
+    "transportation",
+    "health-related social needs",
+    "maternal, child, and family health",
+    "benefits, coverage, and waivers",
+    "budget, rates, and financing",
+    "communication, notices, and member services",
+    "quality and program evaluation",
+    "committee operations",
+    "other",
+)
+
+#: allowed values of AdvisoryMeetingItem.speaker_role
+ADVISORY_SPEAKER_ROLES = (
+    "beneficiary or family member",
+    "advocate or community organization",
+    "provider or provider association",
+    "managed care plan",
+    "state agency staff",
+    "committee member",
+    "member of the public",
+    "unknown",
+)
+
+
+class AdvisoryMeetingItem(ExtractionRecord):
+    """One discussion item in the minutes of a state Medicaid advisory body.
+
+    Grain: (state, committee_name, meeting_date, page, item). The bodies are the Medical
+    Care Advisory Committee (since 2024 the Medicaid Advisory Committee, 42 CFR 431.12)
+    and the Beneficiary Advisory Council. People appear by role only, never by name. The
+    verbatim minutes text the row rests on is in ``provenance.source_span``.
+    """
+
+    record_type: str = "advisory_meeting_item"
+
+    state: str
+    committee_type: Optional[str] = Field(None, description="one of ADVISORY_COMMITTEE_TYPES")
+    committee_name: Optional[str] = Field(None, description="committee name, as printed")
+    meeting_date: Optional[str] = Field(None, description="YYYY-MM-DD")
+    meeting_year: Optional[int] = None
+    item_type: Optional[str] = Field(None, description="one of ADVISORY_ITEM_TYPES")
+    topic_category: Optional[str] = Field(None, description="one of ADVISORY_TOPICS")
+    speaker_role: Optional[str] = Field(None, description="one of ADVISORY_SPEAKER_ROLES")
+    summary: Optional[str] = Field(None, description="one sentence: what was said or decided")
+    agency_response: Optional[str] = Field(
+        None, description="the agency's reply or commitment, if the minutes record one")
+    vote_result: Optional[str] = Field(None, description="passed / failed / tabled, for a motion")
+
+    @field_validator("state")
+    @classmethod
+    def _strip_state(cls, v: str) -> str:
+        return v.strip()
+
+    @model_validator(mode="after")
+    def _checks(self) -> "AdvisoryMeetingItem":
+        if self.meeting_year is not None and not (1966 <= self.meeting_year <= 2035):
+            self.flag(f"implausible meeting_year: {self.meeting_year}", fail=True)
+        if self.meeting_date and not re.fullmatch(r"\d{4}-\d{2}-\d{2}", self.meeting_date):
+            self.flag(f"meeting_date not YYYY-MM-DD: {self.meeting_date}")
+        return self
+
+
 RECORD_TABLE = {
     "eqr_quality_measure": "eqr_quality_measures",
     "eqr_pip": "eqr_performance_improvement_projects",
@@ -617,4 +711,5 @@ RECORD_TABLE = {
     "nursing_home_plan_of_correction": "nursing_home_plans_of_correction",
     "fair_hearing_decision": "fair_hearing_decisions",
     "mco_contract_provision": "mco_contract_provisions",
+    "advisory_meeting_item": "advisory_meeting_items",
 }

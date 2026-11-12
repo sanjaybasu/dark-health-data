@@ -109,7 +109,7 @@ def fetch_rendered_html(url: str, *, timeout_ms: int = 45000, wait_until: str = 
             "then `playwright install chromium`."
         ) from exc
 
-    ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
+    ua = "dark-health-data/0.4 (+https://github.com/sanjaybasu/dark-health-data; research; public records)"
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         try:

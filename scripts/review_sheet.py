@@ -40,6 +40,8 @@ GRADE = {
                      "numeric_value_unit", "obligation"],
     "fair_hearing": ["outcome", "action_type", "issue_category", "service_at_issue",
                      "outcome_reason", "remedy_ordered", "amount_at_issue"],
+    "medicaid_advisory": ["in_scope", "item_type", "topic_category", "speaker_role", "summary",
+                          "agency_response", "meeting_date"],
 }
 GUIDE = {
     "mco_contract": [
@@ -82,6 +84,24 @@ GUIDE = {
         "address, or ID number of the appellant or family. Clinical facts the decision states are allowed.",
         "correct: 1 only if every ok_ column is 1.",
     ],
+    "medicaid_advisory": [
+        "Open each row's link (the minutes; PDF links open at the cited page). Find the quote.",
+        "Put 1 (right) or 0 (wrong) in each ok_ column. Leave a cell blank only if you cannot tell.",
+        "ok_in_scope: the row is a real discussion item (a member concern, public comment, "
+        "recommendation, substantive motion, agency response, or agency update). Mark 0 for roll "
+        "call, approval of minutes or agenda, introductions, scheduling, or adjournment.",
+        "ok_item_type, ok_topic_category, ok_speaker_role: the best label from the controlled list. "
+        "'beneficiary or family member' only when the minutes say the person has Medicaid or cares "
+        "for someone who does. If ok_in_scope is 0, put 0.",
+        "ok_summary: says what the minutes say, with nothing added or lost that changes the meaning.",
+        "ok_agency_response: the agency's reply as recorded for this item, or correctly blank.",
+        "ok_meeting_date: the date of the meeting.",
+        "Privacy: mark 0 in a field (and write 'privacy' in notes) if the summary, response, or quote "
+        "gives a person's name, age, address, or ID number. Names of agencies, plans, and places are allowed.",
+        "correct: 1 only if every ok_ column is 1.",
+        "pages sheet: open each page; in n_missed put how many discussion items the page records that "
+        "are not in rows_already_from_this_page (0 if none), and list them briefly.",
+    ],
 }
 SHOW = {
     "mco_contract": ["state", "document_title", "contract_year", "section",
@@ -90,6 +110,9 @@ SHOW = {
     "fair_hearing": ["decision_id", "decision_year", "decision_category", "program",
                      "respondent", "action_type", "issue_category", "service_at_issue",
                      "outcome", "outcome_reason", "remedy_ordered", "amount_at_issue"],
+    "medicaid_advisory": ["state", "committee_name", "committee_type", "meeting_date",
+                          "item_type", "topic_category", "speaker_role", "summary",
+                          "agency_response", "vote_result"],
 }
 
 

@@ -223,3 +223,34 @@ datasets:
       - name: NASHP State CHW Policies tracker
         what: Narrative CHW policy by state, MCO contracts as one route
         overlap: moderate on CHW; useful for validation
+
+  - id: medicaid_advisory
+    name: Medicaid Advisory Committee and Beneficiary Council Minutes
+    description: >-
+      Discussion items from the posted minutes of state Medicaid advisory committees
+      (MCAC/MAC) and beneficiary advisory councils (BAC): item type, topic, speaker role,
+      summary, agency response, and the verbatim minutes text.
+    status: active
+    priority: 2
+    issuer: State Medicaid agencies
+    format: PDF and HTML minutes on state agency sites
+    underserved_relevance: high
+    medicaid: true
+    why_buried: >-
+      States post minutes one meeting at a time, in PDF or on web pages. What members and
+      the public raise, and how agencies answer, is not counted or coded across states.
+    planned_records:
+      - advisory_meeting_item
+    existing_efforts:
+      - name: SHADAC/SHVS review of first-year BAC annual reports (2026-08-28)
+        what: Narrative review of 26 state BAC annual reports (activities, topics, recommendations)
+        overlap: low (annual reports, narrative, no data file; we code meeting-level minutes)
+      - name: CMS, CHCS, and advocacy trackers of MAC/BAC setup
+        what: Which states have set up a MAC or BAC; checklists and guidance
+        overlap: none on content (structure only)
+      - name: Davidson et al., Health Care Financing Review 1984 (PMC4191358)
+        what: Coded 1979 MCAC minutes from 32 states
+        overlap: none for current years (historical)
+      - name: MACPAC / RTI study of MCACs and beneficiary engagement
+        what: Interviews in six states
+        overlap: low (interviews, not minutes)

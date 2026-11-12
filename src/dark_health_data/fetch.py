@@ -24,11 +24,9 @@ def _read_local(path: str) -> bytes:
 
 
 _USER_AGENTS = [
-    # tried in order; servers vary -- some WAFs block spoofed browser UAs, others
-    # block non-browser UAs, so we try a browser UA, a plain custom UA, then curl.
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
-    "dark-health-data/0.3 (+https://github.com/sanjaybasu/dark-health-data; research)",
-    "curl/8.4.0",
+    # The crawler always names itself. It never presents a browser (or other client's)
+    # user agent: a server that refuses this one is skipped, not worked around.
+    "dark-health-data/0.4 (+https://github.com/sanjaybasu/dark-health-data; research; public records)",
 ]
 
 
@@ -82,7 +80,7 @@ def _download(url: str, timeout: int = 90) -> bytes:
             )
             resp.raise_for_status()
             return resp.content
-        except Exception as exc:  # try the next user-agent
+        except Exception as exc:  # noqa: BLE001 - re-raised below
             last_exc = exc
 
     # Last resort for public records behind an incomplete TLS chain (e.g. NH Medicaid,

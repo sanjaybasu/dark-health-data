@@ -22,10 +22,9 @@ image = (
     .pip_install("pdfplumber", "pymupdf", "pdf2image", "pytesseract", "requests", "urllib3")
 )
 
+# The crawler always names itself; it never presents another client's user agent.
 _UA = [
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
-    "dark-health-data/0.4 (+https://github.com/sanjaybasu/dark-health-data; research)",
-    "curl/8.4.0",
+    "dark-health-data/0.4 (+https://github.com/sanjaybasu/dark-health-data; research; public records)",
 ]
 
 

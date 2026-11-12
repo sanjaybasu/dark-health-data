@@ -1,0 +1,12 @@
+# Source seeds for the Medicaid advisory committee and beneficiary council connector.
+# Default is a SYNTHETIC fixture so the pipeline runs offline. Live lists go in
+# sources_medicaid_advisory_live.yaml.example (not auto-loaded; copy into a run registry).
+
+sources:
+  - state: ZZ
+    publisher: (synthetic example)
+    committee: medicaid advisory committee
+    meetings:
+      - title: Synthetic Medicaid Advisory Committee minutes 2025-03-14
+        year: 2025
+        local_path: data/sample/synthetic_medicaid_advisory_2025.txt
