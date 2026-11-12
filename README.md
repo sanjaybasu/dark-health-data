@@ -138,6 +138,8 @@ lives in [`registry/datasets.yaml`](registry/datasets.yaml).
 | `waiver_1115` | Medicaid Section 1115 demonstration evaluations (food/nutrition, housing) | **active** |
 | `nursing_home_2567` | Nursing-home statements of deficiencies (CMS-2567) — narrative surveyor findings | **active** |
 | `fair_hearing` | Medicaid fair-hearing decisions (Connecticut DSS; one row per decision: issue, respondent, outcome); data [10.5281/zenodo.24164995](https://doi.org/10.5281/zenodo.24164995) | **active** |
+| `mco_contract` | Medicaid managed care contract provisions (7 states; one row per requirement, with the verbatim contract text); data [10.5281/zenodo.24178124](https://doi.org/10.5281/zenodo.24178124) | **active** |
+| `medicaid_advisory` | Medicaid advisory committee and beneficiary council minutes (one row per discussion item) | in progress |
 
 ```bash
 dhd run --dataset chna              --extractor rule   # hospital community needs (demo)
@@ -145,6 +147,8 @@ dhd run --dataset mmrc              --extractor rule   # maternal mortality revi
 dhd run --dataset waiver_1115       --extractor rule   # 1115 demonstration evaluations (demo)
 dhd run --dataset nursing_home_2567 --extractor rule   # nursing-home 2567 deficiencies (demo)
 dhd run --dataset fair_hearing      --extractor rule   # Medicaid fair-hearing decisions (demo)
+dhd run --dataset mco_contract      --extractor rule   # MCO contract provisions (demo)
+dhd run --dataset medicaid_advisory --extractor rule   # MAC/BAC meeting minutes (demo)
 ```
 
 For fair hearings, `scripts/discover_ct_fair_hearings.py` lists the Connecticut
