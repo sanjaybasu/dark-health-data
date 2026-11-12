@@ -50,7 +50,8 @@ ISSUE_CATEGORIES = (
 # Labels the model sometimes writes for a listed value.
 _ACTION_ALIASES = {"discontinuance": "termination", "discontinuation": "termination",
                    "closure": "termination", "spenddown": "calculation",
-                   "applied income": "calculation", "transfer penalty": "penalty"}
+                   "applied income": "calculation", "transfer penalty": "penalty",
+                   "spend-down": "calculation", "spend down": "calculation"}
 _FREE_TEXT = ("issue_statement", "outcome_reason", "remedy_ordered", "service_at_issue")
 
 
@@ -103,7 +104,7 @@ class FairHearingConnector(Connector):
         "appealed, issue category, legal authorities, and outcome, extracted from the "
         "redacted decisions that states publish."
     )
-    version = "0.1.5"
+    version = "0.1.6"
     record_models = [FairHearingDecision]
     ensemble_fields = ["outcome", "issue_category", "action_type"]
     identity_columns = ["state", "decision_id"]
@@ -224,10 +225,14 @@ class FairHearingConnector(Connector):
             "- action_type and issue_category: use exactly one of the listed values. When "
             "several issues apply, use the main one. For action_type:\n"
             "  'prior authorization denial': the respondent denied a request to approve a "
-            "service before it is given (prior authorization or service authorization of "
-            "orthodontia, a drug, equipment, a level-of-care or nursing-facility request). "
-            "Use it even when the decision just says 'denied the request'.\n"
-            "  'denial': an application for coverage was denied.\n"
+            "specific service, item, drug, or level of care before it is given (prior or "
+            "service authorization of orthodontia, a drug, equipment, home care hours, or a "
+            "nursing-facility level-of-care request). Use it even when the decision just "
+            "says 'denied the request'. A decision on an application for Medicaid coverage, "
+            "on a spousal asset or income allowance, or on a spend-down is never a prior "
+            "authorization denial.\n"
+            "  'denial': an application for coverage (including long-term care coverage) "
+            "was denied.\n"
             "  'termination': existing coverage was discontinued or closed.\n"
             "  'reduction': an existing service, budget, or number of hours was cut "
             "(including a cut to zero), even if the cut came from a new assessment or budget.\n"
