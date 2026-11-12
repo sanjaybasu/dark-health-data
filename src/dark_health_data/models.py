@@ -473,6 +473,71 @@ class NursingHomePlanOfCorrection(ExtractionRecord):
 
 
 # Registry of record types -> the table they curate into.
+# ---------------------------------------------------------------------------
+# Medicaid fair-hearing decisions
+# ---------------------------------------------------------------------------
+
+#: allowed values of FairHearingDecision.outcome (the appellant's result)
+FAIR_HEARING_OUTCOMES = {
+    "granted", "denied", "granted in part", "remanded", "dismissed", "withdrawn", "other",
+}
+
+
+class FairHearingDecision(ExtractionRecord):
+    """One state Medicaid fair-hearing (administrative appeal) decision.
+
+    Grain: (state, decision_id). Case-level fields only. The record never carries the
+    appellant's identity, age, diagnosis, or the narrative findings of fact, even when
+    the state's own redaction left them in the source text.
+    """
+
+    record_type: str = "fair_hearing_decision"
+
+    state: str
+    decision_id: str = Field(..., description="state's published decision identifier")
+    decision_category: Optional[str] = Field(
+        None, description="state's own index category, e.g. 'Medical Services'")
+    decision_year: Optional[int] = None
+    program: Optional[str] = Field(
+        None, description="program or coverage group, e.g. 'HUSKY D', 'Long-term care Medicaid'")
+    respondent: Optional[str] = Field(
+        None, description="entity whose action was appealed: state agency, MCO, ASO, facility")
+    respondent_type: Optional[str] = Field(
+        None, description="state agency / managed care organization / administrative services "
+        "organization / nursing facility / marketplace / other")
+    action_type: Optional[str] = Field(
+        None, description="denial / termination / reduction / suspension / prior authorization "
+        "denial / discharge / overpayment / calculation / penalty / effective date / other")
+    issue_category: Optional[str] = Field(
+        None, description="eligibility - income / eligibility - assets or transfer / "
+        "eligibility - procedural or verification / eligibility - other / covered service - "
+        "medical necessity / covered service - other / nursing facility discharge / other")
+    service_at_issue: Optional[str] = Field(None, description="benefit or service, if any")
+    issue_statement: Optional[str] = Field(None, description="the decision's statement of the issue")
+    outcome: Optional[str] = Field(None, description="one of FAIR_HEARING_OUTCOMES")
+    outcome_reason: Optional[str] = Field(None, description="short reason for the outcome")
+    remedy_ordered: Optional[str] = Field(None, description="what the order directs, if anything")
+    amount_at_issue: Optional[float] = Field(None, description="dollar amount in dispute, if printed")
+    legal_authorities: Optional[str] = Field(
+        None, description="statutes, regulations, and policy sections cited, '; '-separated")
+    hearing_officer: Optional[str] = Field(None, description="name of the presiding officer")
+
+    @field_validator("state")
+    @classmethod
+    def _strip_state(cls, v: str) -> str:
+        return v.strip()
+
+    @model_validator(mode="after")
+    def _checks(self) -> "FairHearingDecision":
+        if self.decision_year is not None and not (1990 <= self.decision_year <= 2035):
+            self.flag(f"implausible decision_year: {self.decision_year}", fail=True)
+        if self.outcome and self.outcome.strip().lower() not in FAIR_HEARING_OUTCOMES:
+            self.flag(f"unrecognized outcome: {self.outcome}")
+        if self.amount_at_issue is not None and self.amount_at_issue < 0:
+            self.flag("negative amount_at_issue")
+        return self
+
+
 RECORD_TABLE = {
     "eqr_quality_measure": "eqr_quality_measures",
     "eqr_pip": "eqr_performance_improvement_projects",
@@ -485,4 +550,5 @@ RECORD_TABLE = {
     "waiver_1115_recommendation": "waiver_1115_recommendations",
     "nursing_home_deficiency": "nursing_home_deficiencies",
     "nursing_home_plan_of_correction": "nursing_home_plans_of_correction",
+    "fair_hearing_decision": "fair_hearing_decisions",
 }

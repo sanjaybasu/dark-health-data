@@ -156,3 +156,38 @@ datasets:
       - name: ProPublica Nursing Home Inspect
         what: Searchable index of deficiency narratives; a search UI, not a structured/FAIR row-level dataset
         overlap: medium (similar narratives; we add structured, provenance-stamped records + plans of correction)
+
+  - id: fair_hearing
+    name: Medicaid Fair-Hearing Decisions
+    description: >-
+      Case-level outcomes of state Medicaid fair hearings (program, respondent, action
+      appealed, issue category, legal authorities cited, outcome) extracted from the
+      redacted decisions that states publish.
+    status: active
+    priority: 2
+    issuer: State Medicaid agencies (hearing offices)
+    format: PDF decisions on state agency sites (CT DSS list; MN, NE, TX archives)
+    underserved_relevance: high
+    medicaid: true
+    why_buried: >-
+      States that publish decisions post them one PDF at a time behind a search page.
+      No source counts how often members win, on which issues, or against which plans
+      or agencies.
+    planned_records:
+      - fair_hearing_decision
+    existing_efforts:
+      - name: State decision portals (CT DSS, MN DHS, TX HHSC, MT DPHHS)
+        what: Search pages over individual PDFs; no structured fields or counts
+        overlap: low (same documents; we add case-level structured rows)
+      - name: State aggregate appeal reports (California DSS quarterly hearing results on data.ca.gov; Iowa HHS managed-care appeal reports)
+        what: Counts of hearings by result category; no case-level rows, issues, or authorities
+        overlap: low (aggregates; we add case-level rows)
+      - name: GAO-24-106627 (Medicaid managed care appeals and grievances)
+        what: Federal oversight report on appeal and fair-hearing processes and reporting
+        overlap: low (policy review, not a dataset)
+      - name: Florida Health Justice Project review of LTC fair-hearing decisions
+        what: Hand review of 163 Florida managed long-term care decisions (2020-2021)
+        overlap: low (one state, one program, not released as data)
+      - name: Peer-reviewed literature (PubMed search 2026-11-12)
+        what: No structured dataset or multi-year analysis of published Medicaid fair-hearing decisions found
+        overlap: none found

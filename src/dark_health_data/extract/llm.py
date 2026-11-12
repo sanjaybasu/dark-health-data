@@ -54,7 +54,33 @@ MAX_OUTPUT_TOKENS = 8192
 
 # Characters per model call. EQR reports run 40-300 pages; we window the text to
 # stay well within context while keeping related tables together.
-DEFAULT_CHUNK_CHARS = 7000
+# OHD_CHUNK_CHARS overrides it; a small value (e.g. 1) sends one page per request,
+# which keeps dense multi-year tables under the output cap.
+DEFAULT_CHUNK_CHARS = int(os.environ.get("OHD_CHUNK_CHARS", "7000"))
+
+
+def _chunk_size(connector: Connector) -> int:
+    """OHD_CHUNK_CHARS if set, else the connector's own size, else the default."""
+    if "OHD_CHUNK_CHARS" in os.environ:
+        return DEFAULT_CHUNK_CHARS
+    return getattr(connector, "chunk_chars", None) or DEFAULT_CHUNK_CHARS
+
+
+def _model_params(model: str) -> dict[str, Any]:
+    """Per-model request settings. Claude 5-family models think by default, which a
+    forced tool call does not allow and which spends output tokens on extraction."""
+    if model.startswith(("claude-haiku-5", "claude-sonnet-5", "claude-opus-5", "claude-fable")):
+        return {"thinking": {"type": "disabled"}}
+    return {}
+
+
+class TruncatedOutput(Exception):
+    """The model hit max_tokens, so the tool call (and every record in it) is incomplete."""
+
+
+def _split_pages(chunk: str) -> list[str]:
+    """Split a packed chunk back into its single-page pieces (no-op for one page)."""
+    return _chunk(chunk, size=1)
 
 
 def _chunk(text: str, size: int = DEFAULT_CHUNK_CHARS) -> list[str]:
@@ -151,7 +177,7 @@ class LLMExtractor(Extractor):
         system, tools = self._prefix(connector)
         provenance_base = self._provenance_base(doc, connector)
 
-        chunks = _chunk(text)
+        chunks = _chunk(text, _chunk_size(connector))
         if self.max_chunks:
             chunks = chunks[: self.max_chunks]
         if not chunks:
@@ -160,7 +186,25 @@ class LLMExtractor(Extractor):
         workers = max(1, int(os.environ.get("OHD_LLM_CONCURRENCY", "8")))
 
         def safe_call(chunk: str):
-            return self._call_with_retry(client, system, tools, chunk, doc)
+            try:
+                return self._call_with_retry(client, system, tools, chunk, doc)
+            except TruncatedOutput:
+                pages = _split_pages(chunk)
+                if len(pages) <= 1:
+                    log.error("output truncated on a single page of doc %s; records on "
+                              "that page are lost", doc.document_id)
+                    return None
+                log.warning("output truncated on a %d-page chunk of doc %s; re-sending "
+                            "one page per request", len(pages), doc.document_id)
+                merged: dict[str, Any] = {}
+                for page in pages:
+                    part = safe_call(page)
+                    for key, val in (part or {}).items():
+                        if isinstance(val, list):
+                            merged.setdefault(key, []).extend(val)
+                        else:
+                            merged.setdefault(key, val)
+                return merged or None
 
         # Warm the cache: run the first chunk alone so its prefix write lands before
         # the fan-out, which then reads the cached prefix instead of N parallel writes.
@@ -197,6 +241,8 @@ class LLMExtractor(Extractor):
                 log.error("non-retryable API error on a chunk of doc %s: %s",
                           doc.document_id, exc)
                 return None
+            except TruncatedOutput:
+                raise  # handled by the caller, which re-sends the chunk page by page
             except Exception as exc:  # pragma: no cover - unexpected
                 log.error("unexpected error on a chunk of doc %s: %s", doc.document_id, exc)
                 return None
@@ -212,7 +258,10 @@ class LLMExtractor(Extractor):
             tools=tools,
             tool_choice={"type": "tool", "name": "emit_records"},
             messages=[{"role": "user", "content": USER_INSTRUCTION + chunk}],
+            **_model_params(self.model),
         )
+        if getattr(resp, "stop_reason", None) == "max_tokens":
+            raise TruncatedOutput()
         for block in resp.content:
             if getattr(block, "type", None) == "tool_use" and block.name == "emit_records":
                 return block.input
@@ -244,7 +293,7 @@ class BatchLLMExtractor(LLMExtractor):
             if doc.document_id in seen_docs:
                 continue
             seen_docs.add(doc.document_id)
-            chunks = _chunk(text)
+            chunks = _chunk(text, _chunk_size(connector))
             if self.max_chunks:
                 chunks = chunks[: self.max_chunks]
             for i, chunk in enumerate(chunks):
@@ -259,6 +308,7 @@ class BatchLLMExtractor(LLMExtractor):
                         "tools": tools,
                         "tool_choice": {"type": "tool", "name": "emit_records"},
                         "messages": [{"role": "user", "content": USER_INSTRUCTION + chunk}],
+                        **_model_params(self.model),
                     },
                 })
         return requests, id_map
@@ -285,13 +335,24 @@ class BatchLLMExtractor(LLMExtractor):
             if result.result.type != "succeeded":
                 dropped.append((cid, result.result.type))  # errored/expired/canceled: unbilled
                 continue
+            if getattr(result.result.message, "stop_reason", None) == "max_tokens":
+                # a truncated tool call loses every record in the chunk: report it so
+                # the driver can count it and re-run those chunks one page at a time
+                dropped.append((cid, "max_tokens"))
+                continue
+            if getattr(result.result.message, "stop_reason", None) == "refusal":
+                dropped.append((cid, "refusal"))  # Claude 5-family safety classifier
+                continue
             payload = None
             for block in result.result.message.content:
                 if getattr(block, "type", None) == "tool_use" and block.name == "emit_records":
                     payload = block.input
                     break
-            if not payload:
+            if payload is None:
+                dropped.append((cid, "no_tool_call"))
                 continue
+            if not payload:
+                continue  # a valid, empty answer: the chunk has no records
             doc = route.get(cid)
             if doc is None:
                 dropped.append((cid, "unmapped"))

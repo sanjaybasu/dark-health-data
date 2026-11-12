@@ -1,0 +1,12 @@
+# Source seeds for the Medicaid fair-hearing connector.
+# Default is a SYNTHETIC fixture so the pipeline runs offline. The live Connecticut list
+# is written by scripts/discover_ct_fair_hearings.py to sources_fair_hearing_live.yaml.example.
+
+sources:
+  - state: CT
+    publisher: (synthetic example)
+    category: Medical Services
+    decisions:
+      - id: SYNTH_2024_1
+        year: 2024
+        local_path: data/sample/synthetic_fair_hearing_2024.txt

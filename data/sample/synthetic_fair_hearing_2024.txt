@@ -1,0 +1,22 @@
+MEDICAID FAIR HEARING DECISION (synthetic example)
+
+This is a SYNTHETIC document created to demonstrate the Dark Health Data
+pipeline offline. It describes no real person or case.
+
+State: CT
+Decision ID: SYNTH_2024_1
+Category: Medical Services
+Decision Year: 2024
+Program: HUSKY D
+Respondent: Example Dental ASO (synthetic)
+Respondent Type: administrative services organization
+Action Type: prior authorization denial
+Issue Category: covered service - medical necessity
+Service At Issue: Orthodontic treatment
+Issue: Whether the ASO correctly denied prior authorization for orthodontic treatment
+Outcome: denied
+Outcome Reason: The record did not show a score at or above the medical necessity threshold
+Remedy Ordered: None
+Amount At Issue: 4800
+Legal Authorities: 42 CFR 440.230; Conn. Gen. Stat. 17b-259b
+Hearing Officer: Example Officer (synthetic)

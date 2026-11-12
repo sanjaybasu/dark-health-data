@@ -137,13 +137,20 @@ lives in [`registry/datasets.yaml`](registry/datasets.yaml).
 | `mmrc` | Maternal Mortality Review Committee reports | **active** |
 | `waiver_1115` | Medicaid Section 1115 demonstration evaluations (food/nutrition, housing) | **active** |
 | `nursing_home_2567` | Nursing-home statements of deficiencies (CMS-2567) — narrative surveyor findings | **active** |
+| `fair_hearing` | Medicaid fair-hearing decisions (Connecticut DSS; one row per decision: issue, respondent, outcome) | **active** |
 
 ```bash
 dhd run --dataset chna              --extractor rule   # hospital community needs (demo)
 dhd run --dataset mmrc              --extractor rule   # maternal mortality review (demo)
 dhd run --dataset waiver_1115       --extractor rule   # 1115 demonstration evaluations (demo)
 dhd run --dataset nursing_home_2567 --extractor rule   # nursing-home 2567 deficiencies (demo)
+dhd run --dataset fair_hearing      --extractor rule   # Medicaid fair-hearing decisions (demo)
 ```
+
+For fair hearings, `scripts/discover_ct_fair_hearings.py` lists the Connecticut
+decisions, `scripts/prep_text_lightonocr.py` builds the text cache (local LightOnOCR for
+pages without a usable text layer; Apple silicon, `pip install mlx-vlm pymupdf`), and
+`scripts/privacy_rewrite.py` restates any personal health fact in free text before release.
 
 For EQR, the connector can also **crawl a state landing page** for report PDFs
 (see `landing_url` in `registry/sources_eqr_live.yaml.example`) instead of listing

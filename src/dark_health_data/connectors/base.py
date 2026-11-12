@@ -63,6 +63,9 @@ class Connector(ABC):
 
     #: fields compared between extractors during ensemble reconciliation
     ensemble_fields: list[str] = []
+    #: characters per LLM request; None uses the extractor default (OHD_CHUNK_CHARS wins
+    #: when set). Set it high for short case documents that must be read whole.
+    chunk_chars: Optional[int] = None
     #: flattened column names that identify a primary-table row (for gold-set joins
     #: that survive re-extraction). First column is the default stratification key.
     identity_columns: list[str] = []
