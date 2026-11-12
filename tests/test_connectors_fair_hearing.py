@@ -42,6 +42,10 @@ def test_identifying_text_is_flagged():
     assert rule.fn(leaky)[0] is False
     dob = clean.model_copy(update={"outcome_reason": "The Appellant, born 3/4/1950, was eligible"})
     assert rule.fn(dob)[0] is False
+    aged = clean.model_copy(update={"outcome_reason": "The Appellant turned 65 and lost HUSKY D"})
+    assert rule.fn(aged)[0] is False
+    criterion = clean.model_copy(update={"program": "Medicaid orthodontia (under age 21)"})
+    assert rule.fn(criterion)[0] is True
     # Clinical facts the public, redacted decision states are kept as written.
     scored = clean.model_copy(update={"outcome_reason": "The child's score of 22 was below 26"})
     assert rule.fn(scored)[0] is True

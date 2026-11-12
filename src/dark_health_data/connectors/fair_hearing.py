@@ -34,7 +34,7 @@ from .base import CandidateDoc, Connector
 # redacted by the state; clinical facts the decision states (a score, a diagnosis, a care
 # need) are kept as written, because they carry the reason for the outcome.
 _IDENTIFYING = re.compile(
-    r"\b(?:Mr|Mrs|Ms|Miss|Dr)\.?\s+[A-Z][a-z]+|\b\d{1,3}[- ]years?[- ]old\b"
+    r"\b(?:Mr|Mrs|Ms|Miss|Dr)\.?\s+[A-Z][a-z]+|\b\d{1,3}[- ]years?[- ]old\b|\bturn(?:ed|ing|s)\s+(?:age\s+)?\d{1,3}\b"
     r"|\b(?:born|date of birth|DOB)\b[^.;]{0,20}\d|\b(?:client|case|SSN|ID)\s*(?:#|no\.?|number)\s*\d", re.I
 )
 ACTION_TYPES = (

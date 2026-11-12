@@ -224,9 +224,9 @@ def score(a) -> None:
                                             for k, v in per.items()), 3) if tot else None
     ps = wb["pages"]
     pv = list(ps.iter_rows(values_only=True))[1:]
-    missed = [int(r[5]) for r in pv if r[5] not in (None, "")]
-    found = sum(len([x for x in str(r[4]).split("\n") if x.startswith("- ")]) for r in pv
-                if r[5] not in (None, ""))
+    pv = [r for r in pv if str(r[5] if r[5] is not None else "").strip()]
+    missed = [int(float(r[5])) for r in pv]
+    found = sum(len([x for x in str(r[4]).split("\n") if x.startswith("- ")]) for r in pv)
     out["pages"] = {"reviewed": len(missed), "rows_on_pages": found, "missed": sum(missed),
                     "recall_estimate": round(found / (found + sum(missed)), 3)
                     if found + sum(missed) else None}
