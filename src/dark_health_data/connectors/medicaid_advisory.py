@@ -40,7 +40,8 @@ from .base import CandidateDoc, Connector
 _IDENTIFYING = re.compile(
     r"\b(?:Mr|Mrs|Ms|Miss|Dr)\.?\s+[A-Z][a-z]+|\b\d{1,3}[- ]years?[- ]old\b"
     r"|\b(?:Director|Commissioner|Secretary|Chair|Chairman|Chairwoman|Senator|Representative"
-    r"|Delegate|Deputy)\s+(?!(?:Secretary|Commissioner|Director|Administrator|Chair)\b)"
+    r"|Delegate|Deputy)\s+(?!(?:Secretary|Commissioner|Director|Administrator|Chair|Medicaid"
+    r"|Finance|Executive|Chief|General|Medical|Assistant|No)\b)"
     r"[A-Z][a-z]+\b(?![ ]+(?:of|for)\b)"
     r"|\bturn(?:ed|ing|s)\s+(?:age\s+)?\d{1,3}\b"
     r"|\b(?:born|date of birth|DOB)\b[^.;]{0,20}\d|\b(?:case|SSN|ID|Medicaid)\s*(?:#|no\.?|number)\s*\d"
@@ -82,6 +83,14 @@ def _trim_speaker(quote: Optional[str]) -> Optional[str]:
     # keep the original if the cut would leave almost nothing
     return rest if len(rest) >= 15 else quote
 VOTE_RESULTS = ("passed", "failed", "tabled")
+# Meeting business the instructions skip; a row that reads like it is flagged, not dropped.
+_PROCEDURAL = re.compile(
+    r"\b(?:approv|accept)\w*\b[^.]{0,40}\b(?:minutes|agenda|meeting summary)\b"
+    r"|\bwill meet (?:quarterly|monthly|annually|every)\b|\bno (?:public )?comments? (?:were|was)\b|\bcorrection\w*\b[^.]{0,40}"
+    r"\b(?:minutes|meeting summary)\b|\bwelcom\w*\b|\bintroduc\w+ (?:themselves|members|attendees)"
+    r"|\bintroductions\b|\badjourn\w*|\broll call\b|\bquorum\b"
+    r"|\b(?:next|future|upcoming) meetings?\b[^.]{0,60}\b(?:date|time|format|virtual|in-person"
+    r"|hybrid|schedul\w*|length)\b", re.I)
 
 
 def _to_int(value: Any) -> Optional[int]:
@@ -186,6 +195,12 @@ class MedicaidAdvisoryConnector(Connector):
             hits = [f for f, t in texts.items() if _IDENTIFYING.search(t or "")]
             return (not hits, f"possible identifying text in: {', '.join(hits)}")
 
+        def not_procedural(r):
+            if not isinstance(r, A):
+                return None, ""
+            return (not _PROCEDURAL.search(r.summary or ""),
+                    "reads like meeting business (minutes approval, welcome, scheduling)")
+
         def has_date(r):
             if not isinstance(r, A):
                 return None, ""
@@ -208,6 +223,7 @@ class MedicaidAdvisoryConnector(Connector):
             RecordConstraint("controlled_vocabulary", controlled_vocabulary, "soft"),
             RecordConstraint("no_identifying_text", no_identifying_text, "soft"),
             RecordConstraint("has_date", has_date, "soft"),
+            RecordConstraint("not_procedural", not_procedural, "soft"),
             GroupConstraint("no_repeated_quote", grain, no_repeated_quote, "soft"),
         ]
 

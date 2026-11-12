@@ -42,10 +42,16 @@ def test_rules_flag_problems():
         "item_type": "public comment", "topic_category": "dental and vision",
         "speaker_role": "member of the public", "summary": "A parent said dentists are scarce.",
         "quote": "few dentists accept Medicaid in the county"}]}, DOC, BASE)[0]
-    for name in ("has_quote", "controlled_vocabulary", "no_identifying_text", "has_date"):
+    for name in ("has_quote", "controlled_vocabulary", "no_identifying_text", "has_date",
+                 "not_procedural"):
         assert rules[name].fn(ok)[0] is True, name
     named = ok.model_copy(update={"summary": "Ms. Jones said dentists are scarce."})
     assert rules["no_identifying_text"].fn(named)[0] is False
+    business = ok.model_copy(update={"summary": "The committee approved the minutes of the June meeting."})
+    assert rules["not_procedural"].fn(business)[0] is False
+    for text in ("A member moved to accept the draft minutes of the June meeting.",
+                 "No public comments were provided at the meeting."):
+        assert rules["not_procedural"].fn(ok.model_copy(update={"summary": text}))[0] is False
     odd = ok.model_copy(update={"topic_category": "weather"})
     assert rules["controlled_vocabulary"].fn(odd)[0] is False
     bad = AdvisoryMeetingItem(provenance=BASE, state="NC", meeting_date="June 7")

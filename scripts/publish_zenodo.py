@@ -72,18 +72,28 @@ def main(dataset: str) -> int:
     cur_ver = (latest.get("metadata", {}) or {}).get("version", "0.4.0")
     new_ver = bump_patch(cur_ver)
 
-    valnote = ("A human-validation study is underway; treat as preliminary."
-               if dataset == "eqr" else
-               "AI-extracted, not yet independently validated — preliminary; filter on the trust score.")
+    # Describe only what this release's own rows show: the models named in their
+    # provenance, the counts, and the rule-check status. Claims about methods that did not
+    # run, or about human validation, do not belong here.
+    models = collections.Counter((r.get("provenance") or {}).get("model_name") or
+                                 (r.get("provenance") or {}).get("method") for r in recs)
+    model_txt = ", ".join(f"<code>{m}</code>" for m, _ in models.most_common() if m)
+    status = collections.Counter(r.get("qa_status") for r in recs)
+    units = ("hospitals" if dataset == "chna" else
+             "facilities" if dataset == "nursing_home_2567" else "states or jurisdictions")
     desc = (
-        f"<p><b>Hidden Health Data</b>: {SOURCE[dataset]}, extracted via Claude "
-        f"<code>claude-haiku-4-5</code> with a verification layer (grounding, neurosymbolic "
-        f"constraints, ensemble, conformal gate).</p>"
-        f"<p><b>This release (v{new_ver})</b> — expanded national crawl: <b>{len(recs):,} records</b> "
-        f"from <b>{ndocs:,} source documents</b> ({nunits:,} {('hospitals' if dataset=='chna' else 'facilities' if dataset=='nursing_home_2567' else 'states/jurisdictions')}): {bd}. "
-        f"Every record carries full provenance and a quality/trust score; nothing is imputed or dropped.</p>"
-        f"<p>{valnote} Public-record documents only; no PHI. Code (Apache-2.0): "
-        f'<a href="https://github.com/sanjaybasu/dark-health-data">github.com/sanjaybasu/dark-health-data</a>. CC0-1.0.</p>'
+        f"<p><b>Hidden Health Data</b>: {SOURCE[dataset]}. Version {new_ver} has "
+        f"{len(recs):,} rows from {ndocs:,} source documents ({nunits:,} {units}): {bd}.</p>"
+        f"<p>Method: text from each PDF (OCR where a page has no usable text layer); "
+        f"extraction by {model_txt}; rule checks. Each row links to its source document and "
+        f"page and carries <code>qa_status</code>, <code>qa_flags</code>, and "
+        f"<code>trust_score</code> ({status.get('pass', 0):,} pass, "
+        f"{status.get('warn', 0):,} warn, {status.get('fail', 0):,} fail); flagged rows are "
+        f"kept, not dropped or filled in. No human review of this version is reported here: "
+        f"treat the values as preliminary and see DATASET_CARD.md for limits.</p>"
+        f"<p>Public records. Code (Apache-2.0): "
+        f'<a href="https://github.com/sanjaybasu/dark-health-data">github.com/sanjaybasu/'
+        f'dark-health-data</a>. Data CC0-1.0.</p>'
     )
 
     r = requests.post(f"{BASE}/deposit/depositions/{latest_recid}/actions/newversion", params=P)
