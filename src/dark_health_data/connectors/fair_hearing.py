@@ -8,10 +8,10 @@ structure (issue, findings of fact, conclusions of law, decision or order), but 
 state publishes the decisions as data. This connector extracts one case-level row per
 decision: what was appealed, against whom, the legal basis, and who won.
 
-Privacy: the sources are public and state-redacted, but redaction is imperfect. The
-schema has no field for the appellant's identity, age, diagnosis, or the findings of
-fact, and the instructions tell the model to leave such details out of free-text
-fields. A soft constraint flags free text that still looks identifying.
+Privacy: the sources are public and state-redacted. The schema has no field for the
+appellant's identity, and the instructions keep names, ages, birth dates, addresses, and
+identification numbers out of free text. A soft constraint flags free text that still
+looks identifying. Clinical facts the decision states are kept as written.
 """
 
 from __future__ import annotations
@@ -29,14 +29,13 @@ from ..models import (
 )
 from .base import CandidateDoc, Connector
 
-# Free text that should not appear in a released row: a personal title before a
-# capitalized word, an age, or a clinical fact tied to the person (a diagnosis, score,
-# or assessment result after "the Appellant", "the child", "her", ...). A coverage rule
-# stated in general terms ("coverage requires a score of at least 26 points") is allowed.
+# Free text that identifies a person: a personal title before a capitalized word, an
+# age, a date of birth, or an identification number. The decisions are public and
+# redacted by the state; clinical facts the decision states (a score, a diagnosis, a care
+# need) are kept as written, because they carry the reason for the outcome.
 _IDENTIFYING = re.compile(
     r"\b(?:Mr|Mrs|Ms|Miss|Dr)\.?\s+[A-Z][a-z]+|\b\d{1,3}[- ]years?[- ]old\b"
-    r"|\b(?:appellant|applicant|child|member|resident|minor|son|daughter|she|he|her|his)"
-    r"(?:['\u2019]s)?\b[^.;]{0,60}?\b(?:diagnos(?:is|es|ed)\b|score of \d+|scored|\d+ points|tested)", re.I
+    r"|\b(?:born|date of birth|DOB)\b[^.;]{0,20}\d|\b(?:client|case|SSN|ID)\s*(?:#|no\.?|number)\s*\d", re.I
 )
 ACTION_TYPES = (
     "denial", "termination", "reduction", "suspension", "prior authorization denial",
@@ -104,7 +103,7 @@ class FairHearingConnector(Connector):
         "appealed, issue category, legal authorities, and outcome, extracted from the "
         "redacted decisions that states publish."
     )
-    version = "0.1.3"
+    version = "0.1.5"
     record_models = [FairHearingDecision]
     ensemble_fields = ["outcome", "issue_category", "action_type"]
     identity_columns = ["state", "decision_id"]
@@ -222,10 +221,21 @@ class FairHearingConnector(Connector):
             "- respondent: the entity whose action was appealed (the state agency, a "
             "managed care organization, an administrative services organization such as a "
             "dental or behavioral health ASO, a nursing facility, or the marketplace).\n"
-            "- action_type and issue_category: use exactly one of the listed values. A "
-            "discontinuance or closure of coverage is 'termination'; an applied-income, "
-            "spenddown, or budget computation is 'calculation'; a transfer-of-assets "
-            "penalty period is 'penalty'. When several issues apply, use the main one.\n"
+            "- action_type and issue_category: use exactly one of the listed values. When "
+            "several issues apply, use the main one. For action_type:\n"
+            "  'prior authorization denial': the respondent denied a request to approve a "
+            "service before it is given (prior authorization or service authorization of "
+            "orthodontia, a drug, equipment, a level-of-care or nursing-facility request). "
+            "Use it even when the decision just says 'denied the request'.\n"
+            "  'denial': an application for coverage was denied.\n"
+            "  'termination': existing coverage was discontinued or closed.\n"
+            "  'reduction': an existing service, budget, or number of hours was cut "
+            "(including a cut to zero), even if the cut came from a new assessment or budget.\n"
+            "  'discharge': a nursing facility's involuntary discharge or transfer.\n"
+            "  'effective date': the dispute is about when coverage starts.\n"
+            "  'calculation': the dispute is about an applied-income, spenddown, premium, "
+            "or tax-credit amount, not a cut to a service.\n"
+            "  'penalty': a transfer-of-assets penalty period.\n"
             "- outcome: the appellant's result, read from the DECISION or ORDER section. "
             "Apply these rules in order:\n"
             "  1. If that section states the appeal is GRANTED or SUSTAINED, DENIED, "
@@ -238,22 +248,25 @@ class FairHearingConnector(Connector):
             "action or reopen, rescreen, redetermine, recompute, or restore; 'denied' when "
             "its action stands; 'granted in part' when some but not all issues are "
             "sustained; 'other' when none fits.\n"
+            "  Whatever the order's wording, use 'granted in part' when the decision grants "
+            "at least one issue and denies at least one other.\n"
             "- respondent: if the name is redacted, give only the type (e.g. 'nursing "
             "facility').\n"
-            "- amount_at_issue: a dollar amount printed in the decision that the appellant "
-            "contests (the denied charge, the reduced budget, the spenddown). Copy it; never "
-            "compute a difference or a total. Null if none is printed.\n"
+            "- amount_at_issue: only a dollar amount that the appellant is contesting and "
+            "that the decision prints as such: an overpayment or claim against the "
+            "appellant, a patient liability or charge the appellant disputes, a denied "
+            "payment, a spenddown or premium the appellant disputes. Never use the "
+            "appellant's income, an asset total, an income or asset limit, or another "
+            "figure from the eligibility computation. Copy it; never compute. Null when "
+            "unsure.\n"
             "- legal_authorities: each statute, regulation, or policy-manual section cited "
             "in the conclusions of law, as printed. Leave out citations that appear only in "
             "the standard notice of reconsideration or appeal rights.\n"
             "- hearing_officer: the name of the hearing officer or judge who signed.\n\n"
             "Privacy rule: never copy the appellant's or any family member's name, age, "
-            "date of birth, address, or identification number into any field. Never state a "
-            "health fact about the appellant or a family member: no diagnosis they have or "
-            "lack, no condition, score, test result, or assessment result. You may state "
-            "the coverage rule in general terms ('coverage requires a malocclusion score of "
-            "at least 26 points'; 'the drug is covered only for type 2 diabetes') and then "
-            "say 'the Appellant did not meet the criterion'. Write the issue statement and "
+            "date of birth, address, or identification number into any field. The reason "
+            "may state the coverage criterion and the finding the decision rests on (for "
+            "example, a score against a threshold). Write the issue statement and "
             "reason in general terms ('the Appellant', 'the child'). Do not name anyone "
             "other than the hearing officer.\n\n"
             "Record the page of the decision or order and a 0-1 confidence."

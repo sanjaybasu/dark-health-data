@@ -1,0 +1,14 @@
+MEDICAID MANAGED CARE CONTRACT (synthetic example)
+
+This is a SYNTHETIC document created to demonstrate the Dark Health Data pipeline
+offline. It describes no real state, plan, or contract.
+
+[[PAGE 41]]
+4.3 Health Risk Screening
+The Contractor shall complete a health risk screening for each new Member within ninety (90) days of enrollment.
+PROVISION | 41 | 4.3 Health Risk Screening | health risk assessment and screening | The MCO must complete a health risk screening for each new member within 90 days of enrollment. | 90 | days | must | The Contractor shall complete a health risk screening for each new Member within ninety (90) days of enrollment.
+
+[[PAGE 88]]
+7.2 Quality Withhold
+The Department shall withhold two percent (2%) of the capitation payment, which the Contractor may earn back by meeting the performance targets in Exhibit D.
+PROVISION | 88 | 7.2 Quality Withhold | quality incentives and withholds | The state withholds 2% of capitation, which the MCO can earn back by meeting quality targets. | 2 | percent | penalty | The Department shall withhold two percent (2%) of the capitation payment, which the Contractor may earn back by meeting the performance targets in Exhibit D.

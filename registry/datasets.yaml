@@ -191,3 +191,35 @@ datasets:
       - name: Peer-reviewed literature (PubMed search 2026-11-12)
         what: No structured dataset or multi-year analysis of published Medicaid fair-hearing decisions found
         overlap: none found
+
+  - id: mco_contract
+    name: Medicaid Managed Care Contract Provisions
+    description: >-
+      Requirements that state Medicaid agencies place on managed care organizations (care
+      coordination, risk screening, CHWs, social needs and ILOS, behavioral health,
+      value-based payment, quality withholds, network adequacy, prior authorization, member
+      outreach), one row per requirement with the verbatim contract text.
+    status: active
+    priority: 2
+    issuer: State Medicaid agencies
+    format: PDF model contracts, signed contracts, and amendments on state agency sites
+    underserved_relevance: high
+    medicaid: true
+    why_buried: >-
+      Contracts run to hundreds of pages per state and year, with terms spread across
+      sections, exhibits, and amendments. No public source compares them across states.
+    planned_records:
+      - mco_contract_provision
+    existing_efforts:
+      - name: Commonwealth Fund / GWU Medicaid Managed Care Contract Analysis Database
+        what: Coded contract provisions for 40 jurisdictions, contracts public as of 2019-10-01 (primary care payment, behavioral health, SDOH, quality); searchable site
+        overlap: high on topics for 2019; we add a multi-year series, verbatim text, CHW, ILOS, and prior-authorization terms (not verified whether theirs is downloadable)
+      - name: KFF Medicaid Managed Care Tracker and KFF/HMA 50-state budget survey
+        what: State-reported MCO requirements (SDOH, MLR remittance, selected policies), yearly
+        overlap: low to moderate (state self-report, not contract text); useful as a check
+      - name: SHVS/Bailit compendium of managed care contracting strategies for health equity (2021, 2023, 2024)
+        what: Verbatim contract excerpts for selected states, PDF
+        overlap: limited to equity and HRSN; not structured data
+      - name: NASHP State CHW Policies tracker
+        what: Narrative CHW policy by state, MCO contracts as one route
+        overlap: moderate on CHW; useful for validation

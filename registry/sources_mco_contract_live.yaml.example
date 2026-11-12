@@ -1,0 +1,275 @@
+# Selected by scripts/select_mco_contracts.py; years filled by scripts/date_mco_contracts.py where null.
+sources:
+- state: WA
+  publisher: Washington State Health Care Authority
+  contracts:
+  - title: Apple Health Integrated Managed Care (IMC) contract
+    type: model contract
+    year: 2026
+    url: https://www.hca.wa.gov/assets/billers-and-providers/imc-medicaid.pdf
+- state: VA
+  publisher: Virginia Department of Medical Assistance Services
+  contracts:
+  - title: virginia-cardinal-care-managed-care-contract-fy-2026
+    type: signed contract
+    year: 2026
+    url: https://www.dmas.virginia.gov/media/cdclvnox/virginia-cardinal-care-managed-care-contract-fy-2026.pdf
+  - title: Cardinal Care Managed Care FY25 Contract
+    type: signed contract
+    year: 2025
+    url: https://www.dmas.virginia.gov/media/cyod1lnw/cardinal-care-managed-care-fy2025-contract.pdf
+  - title: Cardinal Care Managed Care FY25 Mid-Year Amendment
+    type: amendment
+    year: 2025
+    url: https://www.dmas.virginia.gov/media/ggsmwvam/cardinal-care-managed-care-contract-fy2025.pdf
+  - title: Cardinal Care Managed Care FY26 Contract
+    type: signed contract
+    year: 2026
+    url: https://www.dmas.virginia.gov/media/jtujhlgt/sfy-2026-ccmc-contract-07-01-2025.pdf
+  - title: cardinal-care-managed-care-contract-fy2025-mid-year-amendment
+    type: amendment
+    year: 2025
+    url: https://www.dmas.virginia.gov/media/lspjeswx/cardinal-care-managed-care-contract-fy2025-mid-year-amendment.pdf
+  - title: FY 2026 Cardinal Care Managed Care Contract Mid-Year Amendment
+    type: amendment
+    year: 2026
+    url: https://www.dmas.virginia.gov/media/opfbx4v0/sfy-2026-ccmc-contract-mid-year-amendment.pdf
+  - title: FY 2027 Cardinal Care Managed Care Contract Changes effective July 1, 2026
+    type: amendment
+    year: 2027
+    url: https://www.dmas.virginia.gov/media/1bwdkb3j/cardinal-care-managed-care-contract-change.pdf
+- state: OH
+  publisher: Ohio Department of Medicaid
+  contracts:
+  - title: Ohio Medicaid MCO Provider Agreement 2014_07
+    type: model contract
+    year: 2014
+    url: https://dam.assets.ohio.gov/image/upload/medicaid.ohio.gov/Providers/ProviderTypes/Managed%20Care/Provider%20Agreements/ManagedCare-PA-201407.pdf
+  - title: Ohio Medicaid MCO Provider Agreement 2015_07
+    type: model contract
+    year: 2015
+    url: https://dam.assets.ohio.gov/image/upload/medicaid.ohio.gov/Providers/ProviderTypes/Managed%20Care/Provider%20Agreements/ManagedCare-PA-201507.pdf
+  - title: Ohio Medicaid MCO Provider Agreement 2016_07
+    type: model contract
+    year: 2016
+    url: https://dam.assets.ohio.gov/image/upload/medicaid.ohio.gov/Providers/ProviderTypes/Managed%20Care/Provider%20Agreements/ManagedCare-PA-201607.pdf
+  - title: Ohio Medicaid MCO Provider Agreement 2017_01
+    type: model contract
+    year: 2017
+    url: https://dam.assets.ohio.gov/image/upload/medicaid.ohio.gov/Providers/ProviderTypes/Managed%20Care/Provider%20Agreements/ManagedCare-PA-201701.pdf
+  - title: Ohio Medicaid MCO Provider Agreement 2018_07
+    type: model contract
+    year: 2018
+    url: https://dam.assets.ohio.gov/image/upload/medicaid.ohio.gov/Providers/ProviderTypes/Managed%20Care/Provider%20Agreements/ManagedCare-PA-201807.pdf
+  - title: Ohio Medicaid MCO Provider Agreement 2023_07
+    type: model contract
+    year: 2023
+    url: https://dam.assets.ohio.gov/image/upload/medicaid.ohio.gov/Providers/ProviderTypes/Managed%20Care/Provider%20Agreements/2023_07_MCO_Final.pdf
+  - title: Ohio Medicaid MCO Provider Agreement 2024_07
+    type: model contract
+    year: 2024
+    url: https://dam.assets.ohio.gov/image/upload/medicaid.ohio.gov/Providers/ProviderTypes/Managed%20Care/Provider%20Agreements/2024_07_MCO_Final.pdf
+  - title: Ohio Medicaid MCO Provider Agreement 2025_07
+    type: model contract
+    year: 2025
+    url: https://dam.assets.ohio.gov/image/upload/medicaid.ohio.gov/Providers/ProviderTypes/Managed%20Care/Provider%20Agreements/2025_07_MCO_Final.pdf
+- state: KY
+  publisher: Kentucky Department for Medicaid Services
+  contracts:
+  - title: 'Kentucky MCO contract (Aetna Better Health of KY): Aetna'
+    type: signed contract
+    year: 2025
+    url: https://www.chfs.ky.gov/agencies/dms/dhpo/Documents/CY2526AetnaContract.PDF
+  - title: 'Kentucky MCO contract (Aetna Better Health of KY): Contract Amendment 4'
+    type: amendment
+    year: 2021
+    url: https://www.chfs.ky.gov/agencies/dms/dhpo/Documents/21-24Amendment4Aetna.pdf
+    year_source: document text
+    year_quote: The initial term of the contract shall be effective January 01, 2021 through December 31, 2024 as in accordance with Section IV (50.2) of this agreement.
+  - title: 'Kentucky MCO contract (Aetna Better Health of KY): Contract Amendment 3 v.4'
+    type: amendment
+    year: 2021
+    url: https://www.chfs.ky.gov/agencies/dms/dhpo/Documents/21-24AetnaMod3V4.pdf
+    year_source: document text
+    year_quote: The initial term of the contract shall be effective January 01, 2021 through December 31, 2024 as in accordance with Section IV (50.2) of this agreement.
+  - title: 'Kentucky MCO contract (Aetna Better Health of KY): Contract Amendment 3 v.3'
+    type: amendment
+    year: null
+    url: https://www.chfs.ky.gov/agencies/dms/dhpo/Documents/MAV3Aetna.pdf
+  - title: 'Kentucky MCO contract (Aetna Better Health of KY): Contract Amendment v.3'
+    type: amendment
+    year: 2021
+    url: https://www.chfs.ky.gov/agencies/dms/dhpo/Documents/SignedMAAetna.pdf
+    year_source: document text
+    year_quote: The initial term of the contract shall be effective January 01, 2021 through December 31, 2024 as in accordance with Section IV (50.2) of this agreement.
+  - title: 'Kentucky MCO contract (Aetna Better Health of KY): Contract Amendment'
+    type: amendment
+    year: 2021
+    url: https://www.chfs.ky.gov/agencies/dms/dhpo/Documents/SignedAmendmentAetna.pdf
+    year_source: document text
+    year_quote: The initial term of the contract shall be effective January 01, 2021 through December 31, 2024 as in accordance with Section IV (50.2) of this agreement.
+  - title: 'Kentucky MCO contract (Aetna Better Health of KY): Contract'
+    type: signed contract
+    year: 2021
+    url: https://www.chfs.ky.gov/agencies/dms/dhpo/Documents/2021AetnaContract.pdf
+- state: NC
+  publisher: North Carolina Department of Health and Human Services
+  contracts:
+  - title: 'NC Medicaid PHP contract 30-190029: contract-30-190029-dhb-prepaid-health-plan-services-rfp'
+    type: signed contract
+    year: null
+    url: https://medicaid.ncdhhs.gov/contract-30-190029-dhb-prepaid-health-plan-services-rfp/download?attachment
+  - title: 'NC Medicaid PHP contract 30-190029: contract-30-190029-dhb-php-amendment'
+    type: amendment
+    year: null
+    url: https://medicaid.ncdhhs.gov/contract-30-190029-dhb-php-amendment/download?attachment
+  - title: 'NC Medicaid PHP contract 30-190029: php-amendment-2-carolina-complete-health-inc-region-4-addition'
+    type: amendment
+    year: null
+    url: https://medicaid.ncdhhs.gov/php-amendment-2-carolina-complete-health-inc-region-4-addition/download
+  - title: 'NC Medicaid PHP contract 30-190029: contract-30-190029-dhb-php-amendment-2-cch-3-model'
+    type: amendment
+    year: null
+    url: https://medicaid.ncdhhs.gov/contract-30-190029-dhb-php-amendment-2-cch-3-model/download
+  - title: 'NC Medicaid PHP contract 30-190029: contract-30-190029-dhb-php-amendment-3-cch-4-model'
+    type: amendment
+    year: null
+    url: https://medicaid.ncdhhs.gov/contract-30-190029-dhb-php-amendment-3-cch-4-model/download
+  - title: 'NC Medicaid PHP contract 30-190029: contract-30-190029-dhb-php-amendment-4-cch-5-model'
+    type: amendment
+    year: null
+    url: https://medicaid.ncdhhs.gov/contract-30-190029-dhb-php-amendment-4-cch-5-model/download
+  - title: 'NC Medicaid PHP contract 30-190029: php-amendment-5-cch-6-capitation-rates-model'
+    type: amendment
+    year: 2021
+    url: https://medicaid.ncdhhs.gov/php-amendment-5-cch-6-capitation-rates-model/download
+    year_source: document text
+    year_quote: '3. Effective Date: This Amendment is effective July 1, 2021, subject to approval by CMS.'
+  - title: 'NC Medicaid PHP contract 30-190029: php-amendment-6-7'
+    type: amendment
+    year: 2021
+    url: https://medicaid.ncdhhs.gov/php-amendment-6-7/download?attachment
+    year_source: document text
+    year_quote: 'Effective January 1, 2021, 22. GOVERNMENTAL RESTRICTIONS is revised and restated as follows:'
+  - title: 'NC Medicaid PHP contract 30-190029: contract-30-190029-prepaid-health-plan-services-amendment-78'
+    type: amendment
+    year: null
+    url: https://medicaid.ncdhhs.gov/contract-30-190029-prepaid-health-plan-services-amendment-78/download?attachment
+  - title: 'NC Medicaid PHP contract 30-190029: 30-190029-dhb-php-amendment-8-model'
+    type: amendment
+    year: null
+    url: https://medicaid.ncdhhs.gov/30-190029-dhb-php-amendment-8-model/download?attachment
+  - title: 'NC Medicaid PHP contract 30-190029: contract-30-190029-prepaid-health-plan-services-amendment-910'
+    type: amendment
+    year: null
+    url: https://medicaid.ncdhhs.gov/contract-30-190029-prepaid-health-plan-services-amendment-910/download?attachment
+  - title: 'NC Medicaid PHP contract 30-190029: contract-30-190029-prepaid-health-plan-services-amendment-1011'
+    type: amendment
+    year: null
+    url: https://medicaid.ncdhhs.gov/contract-30-190029-prepaid-health-plan-services-amendment-1011/download?attachment
+  - title: 'NC Medicaid PHP contract 30-190029: php-services-amendment-1112'
+    type: amendment
+    year: null
+    url: https://medicaid.ncdhhs.gov/php-services-amendment-1112/download?attachment
+  - title: 'NC Medicaid PHP contract 30-190029: contract-30-190029-prepaid-health-plan-services-amendment-1213'
+    type: amendment
+    year: null
+    url: https://medicaid.ncdhhs.gov/contract-30-190029-prepaid-health-plan-services-amendment-1213/download?attachment
+  - title: 'NC Medicaid PHP contract 30-190029: contract-30-190029-prepaid-health-plan-services-amendment-1314'
+    type: amendment
+    year: null
+    url: https://medicaid.ncdhhs.gov/contract-30-190029-prepaid-health-plan-services-amendment-1314/download?attachment
+  - title: 'NC Medicaid PHP contract 30-190029: contract-30-190029-prepaid-health-plan-services-amendment-1415'
+    type: amendment
+    year: null
+    url: https://medicaid.ncdhhs.gov/contract-30-190029-prepaid-health-plan-services-amendment-1415/download?attachment
+  - title: 'NC Medicaid PHP contract 30-190029: contract-30-190029-prepaid-health-plan-services-amendment-1516'
+    type: amendment
+    year: null
+    url: https://medicaid.ncdhhs.gov/contract-30-190029-prepaid-health-plan-services-amendment-1516/download?attachment
+  - title: 'NC Medicaid PHP contract 30-190029: contract-30-190029-prepaid-health-plan-services-amendment-1617'
+    type: amendment
+    year: null
+    url: https://medicaid.ncdhhs.gov/contract-30-190029-prepaid-health-plan-services-amendment-1617/download?attachment
+  - title: 'NC Medicaid PHP contract 30-190029: contract-30-190029-prepaid-health-plan-services-amendment-1819'
+    type: amendment
+    year: null
+    url: https://medicaid.ncdhhs.gov/contract-30-190029-prepaid-health-plan-services-amendment-1819/download?attachment
+  - title: 'NC Medicaid PHP contract 30-190029: contract-30-190029-prepaid-health-plan-services-amendment-1920'
+    type: amendment
+    year: 2024
+    url: https://medicaid.ncdhhs.gov/contract-30-190029-prepaid-health-plan-services-amendment-1920/download?attachment
+    year_source: document text
+    year_quote: This Amendment is effective July 1, 2024, unless otherwise explicitly stated herein, subject to approval by CMS.
+  - title: 'NC Medicaid PHP contract 30-190029: contract-30-190029-prepaid-health-plan-services-amendment-2021'
+    type: amendment
+    year: null
+    url: https://medicaid.ncdhhs.gov/contract-30-190029-prepaid-health-plan-services-amendment-2021/download?attachment
+  - title: 'NC Medicaid PHP contract 30-190029: contract-30-190029-prepaid-health-plan-services-amendment-2223'
+    type: amendment
+    year: null
+    url: https://medicaid.ncdhhs.gov/contract-30-190029-prepaid-health-plan-services-amendment-2223/download?attachment
+  - title: 'NC Medicaid PHP contract 30-190029: contract-30-190029-prepaid-health-plan-services-amendment-2728'
+    type: amendment
+    year: null
+    url: https://medicaid.ncdhhs.gov/contract-30-190029-prepaid-health-plan-services-amendment-2728/download?attachment
+  - title: 'NC Medicaid PHP contract 30-190029: contract-30-190029-prepaid-health-plan-services-amendment-2829'
+    type: amendment
+    year: null
+    url: https://medicaid.ncdhhs.gov/contract-30-190029-prepaid-health-plan-services-amendment-2829/download?attachment
+  - title: 'NC Medicaid PHP contract 30-190029: 30-190029-dhb-sp-amendment-30-31-model'
+    type: amendment
+    year: null
+    url: https://medicaid.ncdhhs.gov/30-190029-dhb-sp-amendment-30-31-model/download?attachment
+  - title: 'NC Medicaid PHP contract 30-190029: contract-30-190029-dhb-sp-amendment-32-33-model'
+    type: amendment
+    year: 2026
+    url: https://medicaid.ncdhhs.gov/contract-30-190029-dhb-sp-amendment-32-33-model/download?attachment
+    year_source: document text
+    year_quote: This Amendment is effective August 14, 2026, unless otherwise explicitly stated herein, subject to approval by CMS.
+- state: AZ
+  publisher: Arizona Health Care Cost Containment System
+  contracts:
+  - title: ACC Contract Amendment 26 for UFC//27 for HC & UHCCP//28 for MOL (YH19-0001)
+    type: amendment
+    year: 2026
+    url: https://www.azahcccs.gov/Resources/Downloads/ContractAmendments/ACC/ACC_EFF100126_FINAL.pdf
+  - title: ACC Contract Amendment 22 for UFC//23 for HC & UHCCP//24 for MOL (YH19-0001)
+    type: amendment
+    year: 2025
+    url: https://www.azahcccs.gov/Resources/Downloads/ContractAmendments/ACC/ACC_BUFC AMD 22_HC AMD 23_UHCCP AMD 23_ MOL AMD 24 FINAL.pdf
+    year_source: document text
+    year_quote: '3. EFFECTIVE DATE OF AMENDMENT: 4. PROAGRAM: YH19-0001 OCTOBER 1, 2025 ACC'
+  - title: ACC Contract Amendment 20 for UFC//21 for HC & UHCCP//22 for MOL (YH19-0001)
+    type: amendment
+    year: 2024
+    url: https://www.azahcccs.gov/Resources/Downloads/ContractAmendments/ACC/ACC_ContractAmendment20forUFC_21forHC_UHCCP_22forMOL_YH19-0001.pdf
+    year_source: document text
+    year_quote: '3. EFFECTIVE DATE OF AMENDMENT: 4. PROGRAM: YH19-0001 OCTOBER 1, 2024 ACC'
+  - title: ACC Contract Amendment 16 for UFC//17 for HC & UHCCP//18 for MOL (YH19-0001)
+    type: amendment
+    year: 2023
+    url: https://www.azahcccs.gov/Resources/Downloads/ContractAmendments/ACC/ACC_16-BUFC,17-HC,18-MOL,17-UHCCP_EFFDATE100123.pdf
+  - title: ACC Contract Amendment 13 for UFC//14 for HC & UHCCP//15 for MOL (YH19-0001)
+    type: amendment
+    year: 2022
+    url: https://www.azahcccs.gov/Resources/Downloads/ContractAmendments/ACC/ACC_Amendment13_UFC-14 _HC & UHCCP15_MOL(YH19-0001).pdf
+    year_source: document text
+    year_quote: 'EFFECTIVE DATE OF AMENDMENT: 4. PROGRAM: YH19-0001 OCTOBER 1, 2022 ACC'
+  - title: ACC Contract Amendment 11 for UFC & MC// Amendment 12 for Others// Amendment 13 for Molina (YH19-0001)
+    type: amendment
+    year: 2021
+    url: https://www.azahcccs.gov/Resources/Downloads/ContractAmendments/ACC/ACC_100121_AMD_FINAL.pdf
+    year_source: document text
+    year_quote: 'EFFECTIVE DATE OF AMENDMENT: 4. PROGRAM: YH19-0001 OCTOBER 1, 2021 ACC'
+- state: PA
+  publisher: Pennsylvania Department of Human Services
+  contracts:
+  - title: 2025 PH HealthChoices Agreement including Exhibits and Non-Rate Financial Appendices
+    type: signed contract
+    year: 2025
+    url: https://www.pa.gov/content/dam/copapwp-pagov/en/dhs/documents/providers/providers/documents/managed-care-information/2025-pa-ph-healthchoices-agreement-exhibits-and-non-rate-financial-appendices-final.pdf
+  - title: 2026 HealthChoices Agreement including Exhibits and Non-Rate Financial Appendices Draft
+    type: signed contract
+    year: 2026
+    url: https://www.pa.gov/content/dam/copapwp-pagov/en/dhs/documents/providers/providers/documents/managed-care-information/2026-healthchoices-agreement-including-exhibits-and-non-rate-financial-appendices-draft.pdf

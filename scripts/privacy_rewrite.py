@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
-"""Remove personal health facts from free-text fields of a processed fair-hearing dataset.
+"""Remove identifying details from free-text fields of a processed fair-hearing dataset.
 
-The extraction prompt forbids stating a health fact about the appellant, but the model
-still writes some ("the Appellant does not have a diagnosis of type 2 diabetes"; "the
-child's malocclusion score of 22 points"). This step finds every free-text field that
-the connector's `_IDENTIFYING` pattern matches, asks Claude to restate only that field
-in policy terms (the coverage rule stays; the person's own clinical fact goes), checks
-the rewrite with the same pattern, and rebuilds the tables. A rewrite that still
-matches is not used: the field keeps its text and the `no_identifying_text` flag.
+The extraction prompt forbids names, ages, birth dates, addresses, and identification
+numbers, but a model can still copy one. This step finds every free-text field that the
+connector's `_IDENTIFYING` pattern matches, asks Claude to restate only that field
+without the identifier (clinical facts the decision states stay), checks the rewrite
+with the same pattern, and rebuilds the tables. A rewrite that still matches is not
+used: the field keeps its text and the `no_identifying_text` flag.
 
 It writes privacy_rewrites.csv (decision_id, field, status) next to the tables. The
 original text is not kept there.
@@ -39,20 +38,17 @@ from dark_health_data.publish import (  # noqa: E402
 )
 from dark_health_data.verify import verify_records  # noqa: E402
 
+def _flag(text: str | None):
+    """First identifying phrase in the text, or None."""
+    return _IDENTIFYING.search(text or "")
+
+
 INSTRUCTIONS = (
     "You edit one field of a structured record about a public Medicaid fair-hearing "
-    "decision. Rewrite the text so that it states no health fact about the appellant or "
-    "a family member: no diagnosis they have or lack, no condition, score, test result, "
-    "or assessment result. Keep the coverage rule in general terms, and keep every other "
-    "fact, the meaning, and the length about the same.\n"
-    "Examples:\n"
-    "- 'because the Appellant does not have a diagnosis of Type 2 diabetes' -> 'because "
-    "the drug is covered only for type 2 diabetes and the Appellant did not meet that "
-    "coverage criterion'\n"
-    "- 'the child's malocclusion score of 22 points was below the 26-point threshold' -> "
-    "'the child did not meet the 26-point malocclusion threshold'\n"
-    "- 'the Appellant did not establish a primary diagnosis of autism before age 22' -> "
-    "'the Appellant did not meet the waiver's diagnostic criteria'\n"
+    "decision. Rewrite the text so that it contains no name, personal title with a name, "
+    "age, date of birth, address, or identification number of the appellant or a family "
+    "member. Refer to people as 'the Appellant', 'the child', and so on. Keep every other "
+    "fact, including any clinical facts, and the meaning.\n"
     "Return only the rewritten text."
 )
 TOOL = {
@@ -86,11 +82,11 @@ def rewrite(client, model: str, text: str) -> str | None:
     """Rewrite; while the result still matches, re-send it naming the phrase (3 rounds)."""
     new = _call(client, model, text)
     for _ in range(2):
-        m = _IDENTIFYING.search(new or "")
+        m = _flag(new)
         if not (new and m):
             break
         new = _call(client, model, f"{new}\n\n(This text still contains '{m.group(0)}', "
-                                   "which states a health fact about the person. Remove it.)")
+                                   "which identifies the person. Remove it.)")
     return new
 
 
@@ -110,7 +106,7 @@ def main() -> int:
             for r in csv.DictReader((out_dir / "documents.csv").open(encoding="utf-8"))]
 
     jobs = [(i, f) for i, r in enumerate(rows) for f in _FREE_TEXT
-            if r.get(f) and _IDENTIFYING.search(r[f])]
+            if r.get(f) and _flag(r[f])]
     print(f"{len(jobs)} field(s) in {len({i for i, _ in jobs})} row(s) to rewrite", flush=True)
     client = anthropic.Anthropic()
     with ThreadPoolExecutor(max_workers=4) as pool:
@@ -118,7 +114,7 @@ def main() -> int:
 
     log = []
     for (i, f), new in zip(jobs, outs):
-        if new and not _IDENTIFYING.search(new):
+        if new and not _flag(new):
             rows[i][f] = new.strip()
             log.append((rows[i]["decision_id"], f, "rewritten"))
         else:

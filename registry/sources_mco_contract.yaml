@@ -1,0 +1,12 @@
+# Source seeds for the Medicaid managed care contract connector.
+# Default is a SYNTHETIC fixture so the pipeline runs offline. Live lists go in
+# sources_mco_contract_live.yaml.example (not auto-loaded; copy into a run registry).
+
+sources:
+  - state: ZZ
+    publisher: (synthetic example)
+    contracts:
+      - title: Synthetic Medicaid Managed Care Contract 2025
+        type: model contract
+        year: 2025
+        local_path: data/sample/synthetic_mco_contract_2025.txt

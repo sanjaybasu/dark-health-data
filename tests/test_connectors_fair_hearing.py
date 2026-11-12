@@ -40,13 +40,13 @@ def test_identifying_text_is_flagged():
     leaky = clean.model_copy(update={"issue_statement": "Whether Ms. Smith, a 67-year-old, is eligible"})
     assert rule.fn(clean)[0] is True
     assert rule.fn(leaky)[0] is False
+    dob = clean.model_copy(update={"outcome_reason": "The Appellant, born 3/4/1950, was eligible"})
+    assert rule.fn(dob)[0] is False
+    # Clinical facts the public, redacted decision states are kept as written.
     scored = clean.model_copy(update={"outcome_reason": "The child's score of 22 was below 26"})
-    assert rule.fn(scored)[0] is False
-    dx = clean.model_copy(update={"outcome_reason": "The Appellant lacks a diagnosis of diabetes"})
-    assert rule.fn(dx)[0] is False
-    policy = clean.model_copy(update={"outcome_reason": "Coverage requires a score of at least "
-                                      "26 points; the Appellant did not meet the criterion"})
-    assert rule.fn(policy)[0] is True
+    assert rule.fn(scored)[0] is True
+    care = clean.model_copy(update={"outcome_reason": "The Appellant needs help with four ADLs"})
+    assert rule.fn(care)[0] is True
 
 
 def test_labels_map_to_controlled_lists():

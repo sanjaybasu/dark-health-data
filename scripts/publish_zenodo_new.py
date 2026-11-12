@@ -1,15 +1,20 @@
 #!/usr/bin/env python3
-"""Create and publish the FIRST Zenodo record for a new dataset.
+"""Publish a new dataset's Zenodo record, or a new version of a record this script made.
 
-`publish_zenodo.py` adds a version to an existing record; this script makes the
-record. Metadata comes from a JSON file (title, version, description_html, keywords);
-creators, license (CC0), and the link to the code repository are fixed here.
+`publish_zenodo.py` versions the five original datasets. This script makes the record
+for a new dataset (default) or, with --new-version <record_id>, adds a version to it:
+the new version replaces the files and keeps the concept DOI. Metadata comes from a JSON
+file (title, version, description_html, keywords); creators, license (CC0), and the link
+to the code repository are fixed here.
 
 Usage:  ZENODO_TOKEN=... python scripts/publish_zenodo_new.py dist/<id>-v<ver>.zip meta.json
-        add --draft to stop before publishing (the draft can be checked on zenodo.org)
+            [--new-version <record_id>] [--draft]
+        --draft stops before publishing (the draft can be checked on zenodo.org)
 """
 from __future__ import annotations
 
+import argparse
+import datetime
 import json
 import os
 import sys
@@ -23,12 +28,25 @@ CREATORS = [{"name": "Basu, Sanjay",
 CODE = "https://github.com/sanjaybasu/dark-health-data"
 
 
-def main(zip_path: str, meta_path: str, draft: bool) -> int:
+def _deposit(P: dict, new_version: str | None) -> dict:
+    if not new_version:
+        r = requests.post(f"{BASE}/deposit/depositions", params=P, json={})
+        r.raise_for_status()
+        return r.json()
+    r = requests.post(f"{BASE}/deposit/depositions/{new_version}/actions/newversion", params=P)
+    r.raise_for_status()
+    dep = requests.get(r.json()["links"]["latest_draft"], params=P)
+    dep.raise_for_status()
+    dep = dep.json()
+    for f in dep.get("files", []):  # the new version starts with the old files: drop them
+        requests.delete(f["links"]["self"], params=P).raise_for_status()
+    return dep
+
+
+def main(zip_path: str, meta_path: str, draft: bool, new_version: str | None) -> int:
     P = {"access_token": os.environ["ZENODO_TOKEN"]}
     meta = json.loads(Path(meta_path).read_text(encoding="utf-8"))
-    r = requests.post(f"{BASE}/deposit/depositions", params=P, json={})
-    r.raise_for_status()
-    dep = r.json()
+    dep = _deposit(P, new_version)
     z = Path(zip_path)
     with z.open("rb") as fh:
         requests.put(f"{dep['links']['bucket']}/{z.name}", data=fh, params=P).raise_for_status()
@@ -39,6 +57,8 @@ def main(zip_path: str, meta_path: str, draft: bool) -> int:
         "related_identifiers": [{"identifier": CODE, "relation": "isCompiledBy",
                                  "scheme": "url"}] + meta.get("related_identifiers", []),
     }
+    if new_version:
+        md["publication_date"] = datetime.date.today().isoformat()
     requests.put(f"{BASE}/deposit/depositions/{dep['id']}", params=P,
                  json={"metadata": md}).raise_for_status()
     if draft:
@@ -53,5 +73,10 @@ def main(zip_path: str, meta_path: str, draft: bool) -> int:
 
 
 if __name__ == "__main__":
-    args = [a for a in sys.argv[1:] if a != "--draft"]
-    sys.exit(main(args[0], args[1], "--draft" in sys.argv))
+    ap = argparse.ArgumentParser()
+    ap.add_argument("zip_path")
+    ap.add_argument("meta_path")
+    ap.add_argument("--draft", action="store_true")
+    ap.add_argument("--new-version", help="record id of the latest published version")
+    a = ap.parse_args()
+    sys.exit(main(a.zip_path, a.meta_path, a.draft, a.new_version))

@@ -538,6 +538,71 @@ class FairHearingDecision(ExtractionRecord):
         return self
 
 
+# ---------------------------------------------------------------------------
+# Medicaid managed care (MCO) contract provisions
+# ---------------------------------------------------------------------------
+
+#: allowed values of MCOContractProvision.provision_category
+MCO_PROVISION_CATEGORIES = (
+    "care coordination and care management",
+    "health risk assessment and screening",
+    "community health workers",
+    "health-related social needs and in lieu of services",
+    "behavioral health integration",
+    "value-based payment",
+    "quality incentives and withholds",
+    "network adequacy and access",
+    "prior authorization and utilization management",
+    "member outreach and engagement",
+)
+
+
+class MCOContractProvision(ExtractionRecord):
+    """One requirement in a state Medicaid managed care contract (or amendment).
+
+    Grain: (state, document_title, page, section, provision_category, requirement). The
+    verbatim contract text the row rests on is in ``provenance.source_span``.
+    """
+
+    record_type: str = "mco_contract_provision"
+
+    state: str
+    document_title: Optional[str] = Field(None, description="contract or amendment title")
+    document_type: Optional[str] = Field(
+        None, description="model contract / signed contract / amendment / exhibit / other")
+    contract_year: Optional[int] = Field(None, description="year the document takes effect")
+    section: Optional[str] = Field(None, description="section number and heading, as printed")
+    provision_category: Optional[str] = Field(None, description="one of MCO_PROVISION_CATEGORIES")
+    requirement: Optional[str] = Field(None, description="one-sentence statement of the requirement")
+    target_population: Optional[str] = Field(
+        None, description="members the requirement applies to, if limited (e.g. 'high-risk members')")
+    numeric_value: Optional[float] = Field(
+        None, description="the requirement's number, if any (e.g. 90 for 'within 90 days')")
+    numeric_unit: Optional[str] = Field(
+        None, description="unit of numeric_value: days / business days / hours / minutes / "
+        "months / years / percent / dollars / miles / members per staff / count / other")
+    obligation: Optional[str] = Field(
+        None, description="must / may / incentive / penalty")
+
+    @field_validator("state")
+    @classmethod
+    def _strip_state(cls, v: str) -> str:
+        return v.strip()
+
+    @model_validator(mode="after")
+    def _checks(self) -> "MCOContractProvision":
+        if self.contract_year is not None and not (1990 <= self.contract_year <= 2035):
+            self.flag(f"implausible contract_year: {self.contract_year}", fail=True)
+        if self.provision_category and self.provision_category not in MCO_PROVISION_CATEGORIES:
+            self.flag(f"provision_category outside the controlled list: {self.provision_category}")
+        if self.numeric_value is not None and self.numeric_unit == "percent" and not (
+                0 <= self.numeric_value <= 100):
+            self.flag(f"percent outside 0-100: {self.numeric_value}")
+        if self.numeric_value is not None and not self.numeric_unit:
+            self.flag("numeric_value without a unit")
+        return self
+
+
 RECORD_TABLE = {
     "eqr_quality_measure": "eqr_quality_measures",
     "eqr_pip": "eqr_performance_improvement_projects",
@@ -551,4 +616,5 @@ RECORD_TABLE = {
     "nursing_home_deficiency": "nursing_home_deficiencies",
     "nursing_home_plan_of_correction": "nursing_home_plans_of_correction",
     "fair_hearing_decision": "fair_hearing_decisions",
+    "mco_contract_provision": "mco_contract_provisions",
 }

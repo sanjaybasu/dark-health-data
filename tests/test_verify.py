@@ -78,6 +78,20 @@ def test_grounding_detects_unsupported_value():
     assert sigs[id(hallucinated)][0].ok is False
 
 
+def test_grounding_allows_gaps_but_not_rewording():
+    doc = ("[[PAGE 7]]\nThe Contractor shall complete a screening Cardinal Care Contract "
+           "Page 7 of 600 within ninety (90) days of enrollment.\n[[PAGE 8]]\nOther text.")
+    gap = _measure(rate=None)
+    gap.provenance.source_span = "The Contractor shall complete a screening within ninety (90) days"
+    gap.provenance.page_start = 7
+    reword = _measure(rate=None)
+    reword.provenance.source_span = "The plan must finish a member survey quickly after joining"
+    reword.provenance.page_start = 7
+    sigs = GroundingVerifier().verify([gap, reword], {"doc1": doc})
+    assert sigs[id(gap)][0].ok is True and "gaps" in sigs[id(gap)][0].detail
+    assert sigs[id(reword)][0].ok is False
+
+
 # --- ensemble ---
 def test_ensemble_reconcile_agreement_disagreement_omission():
     def key(r):
