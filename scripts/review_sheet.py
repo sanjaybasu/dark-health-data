@@ -51,11 +51,19 @@ GUIDE = {
         "behavioral health integration; value-based payment; quality incentives and withholds; "
         "network adequacy and access; prior authorization and utilization management; "
         "member outreach and engagement). Mark 0 for a definition, a table-of-contents line, "
-        "background text, or an out-of-scope topic (claims, credentialing, reports to the state, rates, marketing).",
-        "ok_provision_category: the category is the best of the 10. If ok_in_scope is 0, put 0.",
+        "background text, a duty to submit or report something to the state (a policy, plan, report, data, or "
+        "corrective action plan), a general compliance sanction, or an out-of-scope topic (claims, credentialing, "
+        "provider contracting and notices, encounter data, financial terms, rates, call-center or "
+        "member-services hours, grievances, marketing, covered medical benefits other than behavioral health or "
+        "social needs).",
+        "ok_provision_category: the category is the best of the 10. Any mental health or substance use service, "
+        "crisis service, parity, or physical-behavioral coordination is behavioral health integration; provider "
+        "counts, capacity, PCP assignment, office hours, and on-call availability are network adequacy and access. "
+        "If ok_in_scope is 0, put 0.",
         "ok_requirement: the restatement says what the contract says, with nothing added or lost that changes the meaning.",
         "ok_target_population: right, or correctly blank when the text names no group.",
-        "ok_numeric_value_unit: the number and unit match the text (for example 30 / days), or both are correctly blank.",
+        "ok_numeric_value_unit: the number and unit match the text (for example 30 / days), or both are correctly "
+        "blank. A frequency word with no printed number (annually, monthly) should be blank.",
         "ok_obligation: must (required), may (allowed), incentive (paid for doing it), penalty (charged for not doing it).",
         "correct: 1 only if every ok_ column is 1. notes: anything systematic you see.",
         "pages sheet: open each page; in n_missed put how many in-scope provisions the page states that are "
