@@ -39,10 +39,48 @@ from .base import CandidateDoc, Connector
 # A personal title before a capitalized word, an age, a birth date, or an ID number.
 _IDENTIFYING = re.compile(
     r"\b(?:Mr|Mrs|Ms|Miss|Dr)\.?\s+[A-Z][a-z]+|\b\d{1,3}[- ]years?[- ]old\b"
+    r"|\b(?:Director|Commissioner|Secretary|Chair|Chairman|Chairwoman|Senator|Representative"
+    r"|Delegate|Deputy)\s+(?!(?:Secretary|Commissioner|Director|Administrator|Chair)\b)"
+    r"[A-Z][a-z]+\b(?![ ]+(?:of|for)\b)"
     r"|\bturn(?:ed|ing|s)\s+(?:age\s+)?\d{1,3}\b"
     r"|\b(?:born|date of birth|DOB)\b[^.;]{0,20}\d|\b(?:case|SSN|ID|Medicaid)\s*(?:#|no\.?|number)\s*\d"
 )
 _FREE_TEXT = ("summary", "agency_response")
+
+# A quote that opens with the speaker: "Ms. Keen provided ...", "Director Ford, DMAS,
+# reviewed ...", "Janice Tufte: Jails are ...", "Lee Guice asked ...". The model is told to
+# start after the name but does not always; the speaker part is cut, and what is left is
+# still verbatim source text, so grounding still holds.
+_NAME = r"[A-Z][A-Za-z'\u2019.-]+"
+_TITLE = (r"(?:(?:Mr|Mrs|Ms|Miss|Dr)\.?|Director|Commissioner|Secretary|Chair|Chairman|"
+          r"Chairwoman|Senator|Representative|Delegate|Deputy|Deputy Secretary|"
+          r"Deputy Commissioner)")
+_VERBS = (r"(?:asked|said|says|stated|states|provided|presented|reviewed|discussed|noted|"
+          r"indicated|reported|explained|recommended|requested|gave|shared|commented|"
+          r"expressed|reminded|announced|updated|acknowledged|moved|seconded|called|"
+          r"thanked|inquired|voiced|raised|mentioned|added|agreed|responded|replied|"
+          r"clarified|suggested|confirmed|described|introduced|welcomed|opened|summarized|"
+          r"went|also|then|led|offered|emphasized|highlighted|questioned|wanted|wondered|"
+          r"spoke|talked|answered|motioned|made|proposed|urged|encouraged|shed|wants|"
+          r"provide|present|review|give|share|discuss|note|report|ask|say)\b")
+_SPEAKER = re.compile(
+    rf"^\s*(?:(?:Motion|Action|Comment|Question|Response)\s*:\s*)?"
+    rf"(?!(?:The|A|An|This|That|These|Those|It|They|We|He|She|Members?|Staff|Committee|"
+    rf"Council|Department|Agency|Division|Medicaid|State|Plans?|MCOs?|Providers?)\b)"
+    rf"(?:{_TITLE}\s+)?{_NAME}(?:\s+{_NAME}){{0,2}}"
+    rf"(?:\s*:\s+|(?:,\s*[^,:]{{0,80}}?,?)?\s+(?={_VERBS}))")
+
+
+def _trim_speaker(quote: Optional[str]) -> Optional[str]:
+    """Cut a leading speaker name (and title, affiliation) off a verbatim quote."""
+    if not quote:
+        return quote
+    m = _SPEAKER.match(quote)
+    if not m:
+        return quote
+    rest = quote[m.end():].strip()
+    # keep the original if the cut would leave almost nothing
+    return rest if len(rest) >= 15 else quote
 VOTE_RESULTS = ("passed", "failed", "tabled")
 
 
@@ -58,9 +96,22 @@ def _pick(value: Any, allowed: tuple[str, ...]) -> Optional[str]:
     return v if v in allowed else str(value).strip()
 
 
+_MONTHS = {m: i for i, m in enumerate(
+    ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"], 1)}
+
+
 def _date(value: Any) -> Optional[str]:
-    m = re.search(r"(\d{4})-(\d{1,2})-(\d{1,2})", str(value or ""))
-    return f"{m.group(1)}-{int(m.group(2)):02d}-{int(m.group(3)):02d}" if m else None
+    """YYYY-MM-DD from '2025-09-15' or 'September 15, 2025'; else None."""
+    text = str(value or "")
+    m = re.search(r"(\d{4})-(\d{1,2})-(\d{1,2})", text)
+    if m:
+        y, mo, d = int(m.group(1)), int(m.group(2)), int(m.group(3))
+    else:
+        m = re.search(r"\b([A-Za-z]{3})[a-z]*\.?\s+(\d{1,2}),?\s+(\d{4})", text)
+        if not m or m.group(1).lower() not in _MONTHS:
+            return None
+        y, mo, d = int(m.group(3)), _MONTHS[m.group(1).lower()], int(m.group(2))
+    return f"{y:04d}-{mo:02d}-{d:02d}" if 1 <= mo <= 12 and 1 <= d <= 31 else None
 
 
 class MedicaidAdvisoryConnector(Connector):
@@ -71,13 +122,31 @@ class MedicaidAdvisoryConnector(Connector):
         "and beneficiary advisory councils: item type, topic, speaker role, summary, and "
         "agency response, with the verbatim minutes text."
     )
-    version = "0.1.0"
+    version = "0.1.1"
     record_models = [AdvisoryMeetingItem]
     ensemble_fields = ["item_type", "topic_category", "speaker_role"]
     identity_columns = ["state", "committee_name", "meeting_date"]
     # Most minutes are 3-20 pages, so most go in one request. Rows are short, so a long
     # meeting stays well under the output cap.
     chunk_chars = 40_000
+
+    def finalize(self, records: list) -> list:
+        """Give every row of a document the meeting date that the document states.
+
+        A long set of minutes is split across requests and only page 1 prints the date.
+        When the rows of one document carry exactly one date, rows without it get it.
+        """
+        dates: dict[str, set] = {}
+        for r in records:
+            if isinstance(r, AdvisoryMeetingItem) and r.meeting_date:
+                dates.setdefault(r.provenance.source_document_id, set()).add(r.meeting_date)
+        for r in records:
+            if isinstance(r, AdvisoryMeetingItem) and not r.meeting_date:
+                found = dates.get(r.provenance.source_document_id, set())
+                if len(found) == 1:
+                    r.meeting_date = next(iter(found))
+                    r.meeting_year = int(r.meeting_date[:4])
+        return records
 
     def ensemble_key(self, record):
         if isinstance(record, AdvisoryMeetingItem):
@@ -208,7 +277,8 @@ class MedicaidAdvisoryConnector(Connector):
             "Beneficiary Advisory Council (BAC), a joint meeting, or one of their "
             "subcommittees.\n"
             "In `meeting`, give the committee name as printed, its type, and the meeting "
-            "date (YYYY-MM-DD) if these pages state them.\n"
+            "date as YYYY-MM-DD. The date is usually at the top of the first page (for "
+            "example 'September 15, 2025, Minutes'); give it whenever these pages print it.\n"
             "In `items`, give one row for each discussion item on these pages:\n"
             "- member concern or comment: a committee or council member raises a problem, "
             "a question, or an experience\n"
@@ -222,8 +292,9 @@ class MedicaidAdvisoryConnector(Connector):
             "to an action\n"
             "- agency update: the agency or a plan presents a program, a policy, data, or "
             "a change (one row per presentation, not per slide)\n"
-            "Skip roll call, quorum, approval of earlier minutes, approval of the agenda, "
-            "introductions, scheduling, and adjournment.\n\n"
+            "Skip roll call, quorum, approval of earlier minutes or of the agenda (and the "
+            "motions and votes to approve them), introductions, the date, length, or format "
+            "of future meetings, and adjournment.\n\n"
             "Rules:\n"
             "- topic_category: the best of the controlled list. 'eligibility, enrollment, "
             "and renewals' covers applications, redeterminations, unwinding, and work "
@@ -240,9 +311,11 @@ class MedicaidAdvisoryConnector(Connector):
             "(counties, cities).\n"
             "- agency_response: the agency's reply or commitment to this item if the "
             "minutes record one, in one sentence; otherwise null.\n"
-            "- quote: copy minutes text that the row rests on, exactly as printed, at most "
-            "300 characters. Choose a span that contains no person's name; if every span "
-            "names a person, choose the shortest one.\n"
+            "- quote: copy one continuous span of the minutes that the row rests on, exactly "
+            "as printed, at most 300 characters. Do not join pieces with '...'. The quote "
+            "must not contain any person's name: start it after the speaker's name, title, "
+            "and affiliation. For 'Ms. Lee, Iowa CareGivers, asked whether rates will rise' "
+            "the quote is 'asked whether rates will rise'.\n"
             "- page: the [[PAGE n]] marker where the quote appears.\n"
             "Give a 0-1 confidence for each row. A page with no discussion item gives an "
             "empty list."
@@ -261,7 +334,7 @@ class MedicaidAdvisoryConnector(Connector):
         for it in payload.get("items", []) or []:
             if not isinstance(it, dict):
                 continue
-            quote = (it.get("quote") or "").strip() or None
+            quote = _trim_speaker((it.get("quote") or "").strip() or None)
             prov = Provenance(**provenance_base, page_start=it.get("page"),
                               page_end=it.get("page"), confidence=it.get("confidence"),
                               source_span=quote)

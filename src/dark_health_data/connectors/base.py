@@ -70,6 +70,15 @@ class Connector(ABC):
     #: that survive re-extraction). First column is the default stratification key.
     identity_columns: list[str] = []
 
+    def finalize(self, records: list) -> list:
+        """Document-level pass over all extracted records before verification.
+
+        Default: no change. A connector whose documents are split across requests can
+        use it to share a value that one part of a document states (e.g. a meeting date
+        printed on page 1) with the rows from the document's other parts.
+        """
+        return records
+
     def ensemble_key(self, record: Any) -> Any:
         """Identity key for matching the same record across extractors.
 

@@ -228,6 +228,7 @@ def run_dataset(
             ensemble_fields=connector.ensemble_fields,
         )
 
+    records = connector.finalize(records)
     report = verify_records(records, connector=connector, doc_texts=doc_texts, **ens_kwargs)
     log(
         f"[verify]   {report['n_records']} records — "
@@ -380,6 +381,7 @@ def run_dataset_batch(
     log(f"[batch]    collected {len(records)} record(s); {len(dropped)} request(s) failed "
         f"(unbilled errored/expired/canceled)")
 
+    records = connector.finalize(records)
     report = verify_records(records, connector=connector, doc_texts=doc_texts)
     log(f"[verify]   {report['n_records']} new records — pass={report['qa_pass']} "
         f"warn={report['qa_warn']} fail={report['qa_fail']} | mean_trust={report['mean_trust']}")
