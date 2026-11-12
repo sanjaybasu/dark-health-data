@@ -137,7 +137,7 @@ lives in [`registry/datasets.yaml`](registry/datasets.yaml).
 | `mmrc` | Maternal Mortality Review Committee reports | **active** |
 | `waiver_1115` | Medicaid Section 1115 demonstration evaluations (food/nutrition, housing) | **active** |
 | `nursing_home_2567` | Nursing-home statements of deficiencies (CMS-2567) — narrative surveyor findings | **active** |
-| `fair_hearing` | Medicaid fair-hearing decisions (Connecticut DSS; one row per decision: issue, respondent, outcome) | **active** |
+| `fair_hearing` | Medicaid fair-hearing decisions (Connecticut DSS; one row per decision: issue, respondent, outcome); data [10.5281/zenodo.24164995](https://doi.org/10.5281/zenodo.24164995) | **active** |
 
 ```bash
 dhd run --dataset chna              --extractor rule   # hospital community needs (demo)
